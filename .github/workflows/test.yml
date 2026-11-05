@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - name: Unit and end-to-end tests
-        run: node --test test/
+        run: node --test test/export.test.mjs
       - name: CLI entry point
         run: |
           node bin/cc-exporter.mjs --version

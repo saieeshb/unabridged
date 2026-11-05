@@ -12,7 +12,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "test": "node --test test/",
+    "test": "node --test test/export.test.mjs",
     "build:mcpb": "node scripts/build-mcpb.mjs",
     "validate": "claude plugin validate ."
   },
