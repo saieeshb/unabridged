@@ -1,27 +1,27 @@
 {
-  "name": "cc-exporter",
-  "version": "0.1.1",
-  "description": "Export Claude Code chats in full detail (prompts, replies, thinking, every tool call with its input and output, diffs, subagent transcripts, token usage) to Markdown, HTML or JSON. Adds /export-chat, a skill, and an MCP connector.",
+  "name": "unabridged",
+  "version": "0.2.0",
+  "description": "Export Claude Code (and Codex) chats unabridged: just the conversation by default, or every tool call, file read, diff and subagent with --full. Markdown, HTML or JSON. Adds /export-chat, a skill, and an MCP connector.",
   "author": {
     "name": "Saieesh Bairam",
     "url": "https://github.com/saieeshb"
   },
-  "homepage": "https://github.com/saieeshb/cc-exporter",
-  "repository": "https://github.com/saieeshb/cc-exporter",
+  "homepage": "https://github.com/saieeshb/unabridged",
+  "repository": "https://github.com/saieeshb/unabridged",
   "license": "MIT",
   "keywords": [
     "export",
     "transcript",
-    "chat",
-    "history",
-    "archive",
+    "chat-history",
+    "claude-code",
+    "codex",
     "markdown",
     "html",
     "json",
     "mcp"
   ],
   "mcpServers": {
-    "cc-exporter": {
+    "unabridged": {
       "command": "node",
       "args": [
         "${CLAUDE_PLUGIN_ROOT}/mcp/server.mjs"

@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.0 (2026-11-05)
+
+**cc-exporter is now unabridged**, because it no longer exports only Claude Code. GitHub redirects the old repository, and `cc-exporter` still works as a command.
+
+- **Codex sessions**: export Codex threads (`--from codex`, or automatically inside Codex), with reasoning summaries, tool calls and their output, subagent threads nested under the call that spawned them, approval reviews, compactions, token usage, and archived `.jsonl.zst` sessions.
+- **`unabridged setup`** adds it to the agents on your computer: the Claude Code and Codex plugins, the Gemini CLI extension, and the MCP server plus export skill for Cursor, VS Code, GitHub Copilot CLI, Windsurf, Claude Desktop, Antigravity, OpenCode, Kiro, Qwen Code, Factory Droid, Cline and agents that read `~/.agents/skills`. It backs up every file first, and `--remove` undoes it.
+- New packaging: a Codex plugin and marketplace (`codex plugin marketplace add saieeshb/unabridged`), Gemini CLI and Qwen Code extensions, and skills.sh support (`npx skills add saieeshb/unabridged`).
+- The MCP server lists and exports both agents' sessions, recognizes which agent started it, and uses the client's project roots.
+- The conversation view no longer includes other agents' transcripts.
+- The default export folder is now `chat-exports`, and the curl and PowerShell installers offer to run `unabridged setup`.
+
 ## 0.1.1 (2026-11-05)
 
 - **The default export is now just the conversation**: your prompts and the replies, without tool calls, file reads, hook output, injected context, compaction summaries or token tables. On a typical long session that is about 90 times smaller.

@@ -1,15 +1,15 @@
 {
-  "name": "cc-exporter",
+  "name": "unabridged",
   "owner": {
     "name": "Saieesh Bairam",
     "url": "https://github.com/saieeshb"
   },
-  "description": "cc-exporter: export Claude Code chats in full detail.",
+  "description": "unabridged: export your AI coding agent chats, from the plain conversation to every tool call.",
   "plugins": [
     {
-      "name": "cc-exporter",
+      "name": "unabridged",
       "source": "./",
-      "description": "Export Claude Code chats in full detail to Markdown, HTML or JSON: slash command, skill and MCP connector."
+      "description": "Export Claude Code and Codex chats as Markdown, HTML or JSON: the conversation by default, everything with --full."
     }
   ]
 }

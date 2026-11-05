@@ -1,6 +1,6 @@
 # Security
 
-cc-exporter reads Claude Code transcripts on your computer and writes export files. It makes no network requests, and the HTML it writes loads nothing from outside the file.
+unabridged reads Claude Code and Codex transcripts on your computer and writes export files. `unabridged setup` also edits agents' config files, after backing each one up. It makes no network requests, and the HTML it writes loads nothing from outside the file.
 
 ## Reporting a problem
 

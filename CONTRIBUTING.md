@@ -1,11 +1,11 @@
 # Contributing
 
-Thanks for helping. cc-exporter is plain Node.js (18+) with no dependencies, so there is nothing to install.
+Thanks for helping. unabridged is plain Node.js (18+) with no dependencies, so there is nothing to install. It reads Claude Code and Codex transcripts and turns both into one session model that the renderers share.
 
 ## Run it from a checkout
 
 ```bash
-node bin/cc-exporter.mjs --help
+node bin/unabridged.mjs --help
 ```
 
 ```bash
@@ -30,15 +30,19 @@ The tests build a synthetic Claude Code config folder with one session that cove
 
 | Path | What it does |
 |---|---|
-| `lib/locate.mjs` | finds transcripts and resolves `current`, `latest`, ids and titles |
-| `lib/parse.mjs` | reads the JSONL and builds the session model (merges message parts, attaches tool results, nests subagents) |
+| `lib/locate.mjs`, `lib/parse.mjs` | Claude Code: finds transcripts; reads the JSONL into the session model (merges message parts, attaches tool results, nests subagents) |
+| `lib/codex.mjs` | Codex: finds rollouts (including archived `.zst`), reads them into the same model, nests subagent threads |
+| `lib/sources.mjs` | one view over both agents: `--from`, `current` / `latest` / ids / titles across them |
+| `lib/setup.mjs`, `scripts/setup.mjs` | `unabridged setup`: per-agent config paths and writers |
 | `lib/describe.mjs` | detail-level filtering and helpers shared by both renderers |
 | `lib/render-markdown.mjs`, `lib/render-html.mjs`, `lib/markdown.mjs` | output formats |
 | `lib/redact.mjs` | `--redact` |
 | `lib/export.mjs` | writes the files; used by the CLI, the slash command and the MCP server |
-| `scripts/export-chat.mjs`, `bin/cc-exporter.mjs` | CLI |
+| `scripts/export-chat.mjs`, `bin/unabridged.mjs` | CLI |
 | `mcp/server.mjs` | MCP server (stdio JSON-RPC) |
 | `commands/`, `skills/`, `.claude-plugin/` | the Claude Code plugin |
+| `.codex-plugin/`, `.agents/plugins/` | the Codex plugin and marketplace |
+| `gemini-extension.json`, `qwen-extension.json`, `GEMINI.md` | Gemini CLI and Qwen Code extensions |
 | `manifest.json`, `scripts/build-mcpb.mjs` | the Claude desktop extension |
 | `install.sh`, `install.ps1` | one-line installers |
 
@@ -47,10 +51,10 @@ The tests build a synthetic Claude Code config folder with one session that cove
 - Keep it dependency-free and working on Node 18.
 - Exports must never send anything over the network, and the HTML must load nothing from outside the file.
 - Treat transcript content as untrusted: escape everything that goes into HTML, and don't read files the transcript merely names.
-- Claude Code's transcript format isn't documented and changes between releases. Prefer ignoring unknown records over failing on them.
+- Neither agent documents its transcript format, and both change between releases. Prefer ignoring unknown records over failing on them, and add new shapes to the fixtures in `test/`.
 
 ## Releasing
 
-1. Bump `version` in `package.json`, `.claude-plugin/plugin.json`, `manifest.json` and `lib/util.mjs`, and add a `CHANGELOG.md` entry.
-2. Tag `vX.Y.Z` and push; then `node scripts/build-mcpb.mjs` and attach `dist/cc-exporter.mcpb` to the GitHub release.
+1. Bump `version` in `package.json`, `.claude-plugin/plugin.json`, `.codex-plugin/plugin.json`, `gemini-extension.json`, `qwen-extension.json`, `manifest.json` and `lib/util.mjs`, update the pinned tarball links in `README.md` and `skills/export-transcripts/SKILL.md`, and add a `CHANGELOG.md` entry.
+2. Tag `vX.Y.Z` and push; then `node scripts/build-mcpb.mjs` and attach `dist/unabridged.mcpb` to the GitHub release.
 3. Update the version and `sha256` in the `saieeshb/homebrew-tap` formula.

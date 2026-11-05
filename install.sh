@@ -1,18 +1,20 @@
 #!/usr/bin/env bash
-# cc-exporter installer for macOS and Linux.
-#   curl -fsSL https://raw.githubusercontent.com/saieeshb/cc-exporter/main/install.sh | bash
+# unabridged installer for macOS and Linux.
+#   curl -fsSL https://raw.githubusercontent.com/saieeshb/unabridged/main/install.sh | bash
 #
-# Installs the `cc-exporter` command, and the Claude Code plugin when `claude` is on PATH.
+# Installs the `unabridged` command, then offers to add it to the coding agents it finds
+# (Claude Code, Codex, Cursor, Gemini CLI, VS Code, …) — it shows what it will change and asks.
 # Environment overrides:
-#   CC_EXPORTER_REF=v0.1.0     tag, branch or commit to install (default: latest release)
-#   CC_EXPORTER_HOME=~/.cc-exporter    where the files go
-#   CC_EXPORTER_BIN=~/.local/bin       where the command goes
-#   CC_EXPORTER_NO_PLUGIN=1            skip the Claude Code plugin step
+#   UNABRIDGED_REF=v0.2.0          tag, branch or commit to install (default: latest release)
+#   UNABRIDGED_HOME=~/.unabridged  where the files go
+#   UNABRIDGED_BIN=~/.local/bin    where the command goes
+#   UNABRIDGED_NO_SETUP=1          don't offer to set up agents
 set -euo pipefail
 
-REPO="saieeshb/cc-exporter"
-HOME_DIR="${CC_EXPORTER_HOME:-$HOME/.cc-exporter}"
-BIN_DIR="${CC_EXPORTER_BIN:-$HOME/.local/bin}"
+REPO="saieeshb/unabridged"
+HOME_DIR="${UNABRIDGED_HOME:-${CC_EXPORTER_HOME:-$HOME/.unabridged}}"
+BIN_DIR="${UNABRIDGED_BIN:-${CC_EXPORTER_BIN:-$HOME/.local/bin}}"
+NO_SETUP="${UNABRIDGED_NO_SETUP:-${CC_EXPORTER_NO_PLUGIN:-}}"
 
 say() { printf '\033[1;35m›\033[0m %s\n' "$*"; }
 die() { printf '\033[1;31m✗\033[0m %s\n' "$*" >&2; exit 1; }
@@ -23,40 +25,41 @@ NODE_MAJOR="$(node -p 'process.versions.node.split(".")[0]')"
 command -v curl >/dev/null 2>&1 || die "curl is required."
 command -v tar >/dev/null 2>&1 || die "tar is required."
 
-REF="${CC_EXPORTER_REF:-}"
+REF="${UNABRIDGED_REF:-${CC_EXPORTER_REF:-}}"
 if [ -z "$REF" ]; then
   LATEST_URL="$(curl -fsSLI -o /dev/null -w '%{url_effective}' "https://github.com/$REPO/releases/latest" || true)"
   REF="${LATEST_URL##*/}"
   case "$REF" in ""|latest|releases) REF="main" ;; esac
 fi
 
-say "Installing cc-exporter ($REF) into $HOME_DIR"
+say "Installing unabridged ($REF) into $HOME_DIR"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 curl -fsSL "https://github.com/$REPO/archive/$REF.tar.gz" -o "$TMP/src.tar.gz" || die "Could not download $REF."
 mkdir -p "$TMP/src"
 tar -xzf "$TMP/src.tar.gz" -C "$TMP/src" --strip-components 1
-[ -f "$TMP/src/bin/cc-exporter.mjs" ] || die "The download doesn't look like cc-exporter."
+[ -f "$TMP/src/bin/unabridged.mjs" ] || die "The download doesn't look like unabridged."
 
 rm -rf "$HOME_DIR"
 mkdir -p "$(dirname "$HOME_DIR")"
 mv "$TMP/src" "$HOME_DIR"
 
 mkdir -p "$BIN_DIR"
-cat > "$BIN_DIR/cc-exporter" <<EOF
+for name in unabridged cc-exporter; do
+  cat > "$BIN_DIR/$name" <<EOF
 #!/usr/bin/env bash
-exec node "$HOME_DIR/bin/cc-exporter.mjs" "\$@"
+exec node "$HOME_DIR/bin/unabridged.mjs" "\$@"
 EOF
-chmod +x "$BIN_DIR/cc-exporter"
-say "Command installed: $BIN_DIR/cc-exporter"
+  chmod +x "$BIN_DIR/$name"
+done
+say "Command installed: $BIN_DIR/unabridged"
 
-if [ -z "${CC_EXPORTER_NO_PLUGIN:-}" ] && command -v claude >/dev/null 2>&1; then
-  say "Adding the Claude Code plugin (slash command, skill, MCP connector)"
-  claude plugin marketplace add "$REPO" >/dev/null 2>&1 || claude plugin marketplace update cc-exporter >/dev/null 2>&1 || true
-  if claude plugin install cc-exporter@cc-exporter >/dev/null 2>&1; then
-    say "Plugin installed. In Claude Code, run /reload-plugins or start a new session, then /export-chat"
+if [ -z "$NO_SETUP" ]; then
+  if [ -r /dev/tty ] && [ -w /dev/tty ] && (: < /dev/tty) 2>/dev/null; then
+    say "Adding unabridged to your coding agents (you'll see the changes first)"
+    "$BIN_DIR/unabridged" setup < /dev/tty || true
   else
-    say "Couldn't install the plugin automatically. In Claude Code run: /plugin install cc-exporter@cc-exporter"
+    say "To add it to Claude Code, Codex, Cursor, Gemini CLI and other agents, run: unabridged setup"
   fi
 fi
 
@@ -64,4 +67,4 @@ case ":$PATH:" in
   *":$BIN_DIR:"*) ;;
   *) say "Add $BIN_DIR to your PATH, e.g.:  echo 'export PATH=\"$BIN_DIR:\$PATH\"' >> ~/.zshrc" ;;
 esac
-say "Done. Try:  cc-exporter --list"
+say "Done. Try:  unabridged --list"

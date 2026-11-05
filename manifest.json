@@ -1,10 +1,10 @@
 {
   "manifest_version": "0.2",
-  "name": "cc-exporter",
-  "display_name": "Claude Code Chat Exporter",
-  "version": "0.1.1",
-  "description": "List, read and export your local Claude Code sessions in full detail (Markdown, HTML, JSON).",
-  "long_description": "Reads the Claude Code transcripts stored on this computer (~/.claude/projects) and exports any session with every prompt, reply, thinking block, tool call with its input and output, file diff, subagent transcript, injected context and token usage. Exports are a self-contained searchable HTML page, Markdown with images saved beside it, and structured JSON. Optional redaction masks keys, tokens, passwords, emails and your home path. Nothing leaves your computer.",
+  "name": "unabridged",
+  "display_name": "Unabridged",
+  "version": "0.2.0",
+  "description": "List, read and export your Claude Code and Codex sessions: just the conversation, or everything.",
+  "long_description": "Reads the Claude Code (~/.claude/projects) and Codex (~/.codex/sessions) transcripts stored on this computer and exports any session as Markdown, a self-contained searchable HTML page, or JSON. By default you get just the conversation; ask for everything to include thinking, every tool call with its input and output, file diffs, subagent threads, injected context and token usage. Optional redaction masks keys, tokens, passwords, emails and your home folder. Nothing leaves your computer.",
   "author": {
     "name": "Saieesh Bairam",
     "url": "https://github.com/saieeshb"
@@ -12,6 +12,7 @@
   "license": "MIT",
   "keywords": [
     "claude code",
+    "codex",
     "export",
     "transcript",
     "chat history",
@@ -32,15 +33,15 @@
   "tools": [
     {
       "name": "list_sessions",
-      "description": "List Claude Code sessions on this computer, newest first."
+      "description": "List Claude Code and Codex sessions on this computer, newest first."
     },
     {
       "name": "read_session",
-      "description": "Return a session transcript as Markdown, paged, for reading or summarizing."
+      "description": "Return a session as Markdown, paged: the conversation, or everything."
     },
     {
       "name": "export_session",
-      "description": "Write a session to HTML, Markdown and/or JSON files in full detail."
+      "description": "Write a session to Markdown, HTML or JSON files."
     }
   ],
   "compatibility": {
@@ -53,10 +54,10 @@
       "node": ">=18.0.0"
     }
   },
-  "homepage": "https://github.com/saieeshb/cc-exporter",
+  "homepage": "https://github.com/saieeshb/unabridged",
   "repository": {
     "type": "git",
-    "url": "https://github.com/saieeshb/cc-exporter.git"
+    "url": "https://github.com/saieeshb/unabridged.git"
   },
   "icon": "assets/icon.png"
 }

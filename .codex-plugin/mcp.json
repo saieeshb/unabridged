@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "unabridged": {
+      "command": "node",
+      "args": ["./bin/unabridged.mjs", "mcp"],
+      "cwd": "./"
+    }
+  }
+}

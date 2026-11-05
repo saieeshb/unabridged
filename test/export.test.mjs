@@ -24,7 +24,7 @@ function rec(o) {
 }
 
 before(() => {
-  tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'cc-exporter-test-'));
+  tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'unabridged-test-'));
   config = path.join(tmp, 'config');
   cwd = path.join(tmp, 'My Project');
   out = path.join(tmp, 'out');
@@ -146,7 +146,7 @@ test('exports the session in full detail to html, md and json', () => {
 
   // json
   const data = JSON.parse(json);
-  assert.equal(data.exporter.name, 'cc-exporter');
+  assert.equal(data.exporter.name, 'unabridged');
   assert.equal(data.meta.title, 'Fixture session');
   assert.equal(data.stats.toolCalls, 5);
   assert.equal(data.stats.prompts, 4); // typed prompt, queued prompt, /model, "Thanks"
@@ -199,7 +199,7 @@ test('session selection: id prefix, title words, list, errors', () => {
 test('default output folder git-ignores itself', () => {
   const r = cli(['-f', 'json']);
   assert.equal(r.status, 0, r.stderr);
-  assert.equal(fs.readFileSync(path.join(cwd, 'claude-exports', '.gitignore'), 'utf8').trim().split('\n').pop(), '*');
+  assert.equal(fs.readFileSync(path.join(cwd, 'chat-exports', '.gitignore'), 'utf8').trim().split('\n').pop(), '*');
 });
 
 test('markdown is the only default format', () => {
@@ -358,7 +358,7 @@ test('MCP server: initialize, list tools, call tools', async () => {
   for (const m of msgs) child.stdin.write(JSON.stringify(m) + '\n');
   child.stdin.end(); // the server must still answer everything, then exit by itself
   await Promise.race([exited, new Promise((r) => setTimeout(r, 15000))]);
-  assert.equal(replies.get(1).result.serverInfo.name, 'cc-exporter');
+  assert.equal(replies.get(1).result.serverInfo.name, 'unabridged');
   assert.deepEqual(replies.get(2).result.tools.map((t) => t.name), ['list_sessions', 'read_session', 'export_session']);
   assert.match(replies.get(3).result.content[0].text, new RegExp(SID));
   assert.match(replies.get(4).result.content[0].text, /# Fixture session/);

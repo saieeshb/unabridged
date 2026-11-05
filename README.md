@@ -1,107 +1,124 @@
 <div align="center">
 
-<img src="assets/icon.png" width="112" height="112" alt="cc-exporter icon: a chat bubble with a download arrow">
+<img src="assets/icon.png" width="112" height="112" alt="unabridged icon: a chat bubble with a download arrow">
 
-# cc-exporter
+# unabridged
 
-### Export any Claude Code chat in full detail.
+### Export your AI coding agent chats.
 
-**The conversation by default; with `--full`, every thinking block, tool call, diff and subagent too. Markdown, HTML or JSON.**
+**Claude Code and Codex. Just the conversation by default, or every tool call, file read and subagent with `--full`. Markdown, HTML or JSON.**
 
-[![test](https://img.shields.io/github/actions/workflow/status/saieeshb/cc-exporter/test.yml?branch=main&style=flat-square&label=tests)](https://github.com/saieeshb/cc-exporter/actions/workflows/test.yml)
-[![release](https://img.shields.io/github/v/release/saieeshb/cc-exporter?style=flat-square&color=c2541f)](https://github.com/saieeshb/cc-exporter/releases/latest)
-[![Claude Code plugin](https://img.shields.io/badge/Claude_Code-plugin-d97757?style=flat-square)](#install)
-[![MCP server](https://img.shields.io/badge/MCP-server-5c4ee5?style=flat-square)](#use-it-as-an-mcp-connector)
+[![test](https://img.shields.io/github/actions/workflow/status/saieeshb/unabridged/test.yml?branch=main&style=flat-square&label=tests)](https://github.com/saieeshb/unabridged/actions/workflows/test.yml)
+[![release](https://img.shields.io/github/v/release/saieeshb/unabridged?style=flat-square&color=c2541f)](https://github.com/saieeshb/unabridged/releases/latest)
+[![Claude Code](https://img.shields.io/badge/Claude_Code-plugin-d97757?style=flat-square)](#install)
+[![Codex](https://img.shields.io/badge/Codex-plugin-10a37f?style=flat-square)](#install)
+[![MCP server](https://img.shields.io/badge/MCP-server-5c4ee5?style=flat-square)](#use-it-from-any-agent)
 [![macOS · Linux · Windows](https://img.shields.io/badge/macOS_·_Linux_·_Windows-supported-2d81ff?style=flat-square)](#install)
-[![Node 18+](https://img.shields.io/badge/Node.js-18%2B-339933?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org)
 [![MIT license](https://img.shields.io/badge/license-MIT-3a3a3a?style=flat-square)](LICENSE)
 
 <a href="https://buymeacoffee.com/saieeesh"><img alt="Buy me a coffee" src="https://img.shields.io/badge/Buy_me_a_coffee-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=black" height="36"></a>
 
-[Install](#install) · [Use](#use) · [What's exported](#whats-exported) · [Thinking](#getting-the-thinking-text) · [MCP](#use-it-as-an-mcp-connector) · [FAQ](#faq)
+[Install](#install) · [Use](#use) · [What's exported](#whats-exported) · [Any agent](#use-it-from-any-agent) · [Thinking](#getting-the-thinking-text) · [FAQ](#faq)
 
-<code>/plugin marketplace add saieeshb/cc-exporter</code>
+<code>curl -fsSL https://raw.githubusercontent.com/saieeshb/unabridged/main/install.sh | bash</code>
 
 </div>
 
 > [!IMPORTANT]
-> The official sources are this repository, its [releases](https://github.com/saieeshb/cc-exporter/releases), and the [`saieeshb/tap`](https://github.com/saieeshb/homebrew-tap) Homebrew tap. cc-exporter only reads files on your computer and never uploads anything.
+> The official sources are this repository, its [releases](https://github.com/saieeshb/unabridged/releases), and the [`saieeshb/tap`](https://github.com/saieeshb/homebrew-tap) Homebrew tap. unabridged only reads files on your computer and never uploads anything. It was called **cc-exporter** before 0.2.0, and the old command still works.
 
 <div align="center">
 <br>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/screenshot-dark.png">
-  <img src="assets/screenshot-light.png" alt="An HTML export of a Claude Code session: session stats, a prompt index, the user's request, Claude's thinking, a Grep and Read call, an Edit shown as a diff, a subagent, a passing test run and the final summary table" width="100%">
+  <img src="assets/screenshot-light.png" alt="A full HTML export of a coding-agent session: session stats, a prompt index, the user's request, the agent's thinking, Grep and Read calls, an Edit shown as a diff, a subagent, a passing test run and the final summary table" width="100%">
 </picture>
-<sub>An HTML export of a short session: thinking, tool calls, a diff, a subagent and the test run, all searchable and collapsible.</sub>
+<sub>A <code>--full</code> HTML export: thinking, tool calls, a diff, a subagent and the test run, all searchable and collapsible. Without <code>--full</code> you get just the messages.</sub>
 <br><br>
 </div>
 
 <table>
   <tr>
     <td width="25%" valign="top">
-      <h3>🧾 Nothing left out</h3>
-      Prompts and replies, plus thinking, every tool input and output, diffs, images, subagents, hooks, compactions, errors, tokens and cost.
+      <h3>💬 Conversation first</h3>
+      By default you get what was said: your prompts and the replies. Clean, readable and small enough to share. A typical long session is about 90 times smaller than its full export.
     </td>
     <td width="25%" valign="top">
-      <h3>📄 Three formats</h3>
-      Markdown by default. A searchable, offline HTML page, or structured JSON for scripts.
+      <h3>🧾 Or everything</h3>
+      <code>--full</code> adds thinking, every tool call with its input and output, file reads, diffs, subagents, hooks, injected context, tokens and cost.
     </td>
     <td width="25%" valign="top">
-      <h3>🔒 Safe to share</h3>
-      <code>--redact</code> masks API keys, tokens, passwords, emails and your home folder before you send an export to anyone.
+      <h3>🤝 Claude Code and Codex</h3>
+      Reads both agents' local transcripts, including Codex subagent threads and archived sessions, in Markdown, a searchable HTML page, or JSON.
     </td>
     <td width="25%" valign="top">
-      <h3>🤖 Agent-ready</h3>
-      A slash command, a skill Claude uses when you ask in plain words, and an MCP connector for Claude Desktop, Cursor and VS Code.
+      <h3>🔌 In any agent</h3>
+      Plugins for Claude Code and Codex, extensions for Gemini CLI and Qwen Code, and an MCP server plus skill for Cursor, VS Code, Windsurf, Claude Desktop and more. <code>unabridged setup</code> wires them up.
     </td>
   </tr>
 </table>
 
 ## How it works
 
-Claude Code already keeps every session on your computer, as one transcript file per chat in `~/.claude/projects/`. cc-exporter:
+Claude Code keeps every chat in `~/.claude/projects/`, and Codex keeps its chats in `~/.codex/sessions/`. unabridged:
 
-1. **Finds** the session: this one, the previous one, or any past one by id or title.
-2. **Reads** the whole transcript, including the parts Claude Code's own `/export` leaves out. That covers tool calls and their results, subagent transcripts, saved large outputs and injected context.
+1. **Finds** the session: the one you're in, the previous one, or any past one by id or title.
+2. **Reads** the whole transcript, including what the agents' own exports leave out: tool calls and their results, subagent threads, large outputs saved to disk, injected context.
 3. **Rebuilds** the conversation: merges streamed message parts, attaches each tool result to its call, and nests subagents where they ran.
-4. **Writes** Markdown, HTML or JSON, and can mask secrets on the way out.
-
-It works for any past session still on your computer, not only the one you're in.
+4. **Writes** just the conversation, or everything with `--full`, as Markdown, HTML or JSON. It can mask secrets on the way out.
 
 ## Install
 
-Pick whichever fits. Each one needs [Node.js 18+](https://nodejs.org).
+**One line** (macOS and Linux) installs the `unabridged` command and offers to add it to every agent it finds. It shows the changes first.
 
-| Where | Command |
+```bash
+curl -fsSL https://raw.githubusercontent.com/saieeshb/unabridged/main/install.sh | bash
+```
+
+**Windows** (PowerShell):
+
+```powershell
+irm https://raw.githubusercontent.com/saieeshb/unabridged/main/install.ps1 | iex
+```
+
+Or install it the way each agent expects:
+
+| Agent | Install |
 |---|---|
-| **Claude Code**: plugin, recommended | `/plugin marketplace add saieeshb/cc-exporter` then `/plugin install cc-exporter@cc-exporter` |
-| **macOS / Linux**: one line | `curl -fsSL https://raw.githubusercontent.com/saieeshb/cc-exporter/main/install.sh \| bash` |
-| **Windows**: PowerShell | `irm https://raw.githubusercontent.com/saieeshb/cc-exporter/main/install.ps1 \| iex` |
-| **Homebrew** | `brew tap saieeshb/tap && brew trust saieeshb/tap && brew install cc-exporter` |
-| **No install**: npx | `npx -y https://github.com/saieeshb/cc-exporter/archive/refs/tags/v0.1.1.tar.gz --help` |
-| **Claude desktop app**: chat | Download [`cc-exporter.mcpb`](https://github.com/saieeshb/cc-exporter/releases/latest/download/cc-exporter.mcpb) and open it |
+| **Claude Code** | `/plugin marketplace add saieeshb/unabridged` then `/plugin install unabridged@unabridged` |
+| **Codex** | `codex plugin marketplace add saieeshb/unabridged` then `codex plugin add unabridged@unabridged` |
+| **Gemini CLI** | `gemini extensions install https://github.com/saieeshb/unabridged` |
+| **Qwen Code** | `qwen extensions install https://github.com/saieeshb/unabridged` |
+| **Claude desktop app** | Download [`unabridged.mcpb`](https://github.com/saieeshb/unabridged/releases/latest/download/unabridged.mcpb) and open it |
+| **Cursor** | [![Add to Cursor](https://img.shields.io/badge/Cursor-Add_unabridged-000000?style=flat-square&logo=cursor&logoColor=white)](https://cursor.com/install-mcp?name=unabridged&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsImh0dHBzOi8vZ2l0aHViLmNvbS9zYWllZXNoYi91bmFicmlkZ2VkL2FyY2hpdmUvcmVmcy90YWdzL3YwLjIuMC50YXIuZ3oiLCJtY3AiXX0%3D) |
+| **VS Code (Copilot)** | [![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_unabridged-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=unabridged&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22https%3A//github.com/saieeshb/unabridged/archive/refs/tags/v0.2.0.tar.gz%22%2C%22mcp%22%5D%7D) |
+| **Windsurf, Copilot CLI, Antigravity, OpenCode, Kiro, Factory Droid, Cline, …** | `unabridged setup` (see [below](#use-it-from-any-agent)) |
+| **Any agent with skills** | `npx skills add saieeshb/unabridged` (installs the export skill into ~70 agents) |
+| **Homebrew** | `brew tap saieeshb/tap && brew trust saieeshb/tap && brew install unabridged` |
+| **No install** | `npx -y https://github.com/saieeshb/unabridged/archive/refs/tags/v0.2.0.tar.gz --help` |
 
-The curl and PowerShell installers add a `cc-exporter` command. If they find the `claude` command, they also install the Claude Code plugin.
+Everything needs [Node.js 18+](https://nodejs.org).
 
 <details>
-<summary><b>Claude Code: more ways to install the plugin</b></summary>
+<summary><b>Coming from cc-exporter?</b></summary>
 
 <br>
 
-From a shell instead of the Claude Code prompt:
+GitHub redirects the old repository, and `cc-exporter` still works as a command. To move the Claude Code plugin to its new name:
 
 ```bash
-claude plugin marketplace add saieeshb/cc-exporter
+claude plugin uninstall cc-exporter@cc-exporter
 ```
 
 ```bash
-claude plugin install cc-exporter@cc-exporter
+claude plugin marketplace remove cc-exporter
 ```
 
-In the **Claude desktop app's Code tab**: click **+** next to the prompt box, then **Plugins**. Choose **Add marketplace**, enter `saieeshb/cc-exporter`, then **Add plugin**.
+```bash
+claude plugin marketplace add saieeshb/unabridged && claude plugin install unabridged@unabridged
+```
 
-Start a new session (or run `/reload-plugins`) and `/export-chat` is ready. To update later, run `/plugin marketplace update cc-exporter`.
+With Homebrew: `brew uninstall cc-exporter && brew install unabridged`.
 
 </details>
 
@@ -110,63 +127,60 @@ Start a new session (or run `/reload-plugins`) and `/export-chat` is ready. To u
 
 <br>
 
-Both installers read these environment variables:
-
 | Variable | Default | Meaning |
 |---|---|---|
-| `CC_EXPORTER_REF` | latest release | tag, branch or commit to install |
-| `CC_EXPORTER_HOME` | `~/.cc-exporter`, or `%LOCALAPPDATA%\cc-exporter` on Windows | where the files go |
-| `CC_EXPORTER_BIN` | `~/.local/bin` (macOS/Linux) | where the `cc-exporter` command goes |
-| `CC_EXPORTER_NO_PLUGIN` | unset | set to `1` to skip the Claude Code plugin |
+| `UNABRIDGED_REF` | latest release | tag, branch or commit to install |
+| `UNABRIDGED_HOME` | `~/.unabridged`, or `%LOCALAPPDATA%\unabridged` on Windows | where the files go |
+| `UNABRIDGED_BIN` | `~/.local/bin` (macOS/Linux) | where the command goes |
+| `UNABRIDGED_NO_SETUP` | unset | set to `1` to skip the agent setup step |
 
-To uninstall, delete that folder and the `cc-exporter` command. For the plugin, run `/plugin uninstall cc-exporter@cc-exporter`. With Homebrew, run `brew uninstall cc-exporter`. Recent Homebrew versions ask you to `brew trust` a third-party tap once before installing from it.
+To uninstall, run `unabridged setup --remove`, then delete that folder and the `unabridged` command.
 
 </details>
 
 ## Use
 
-In Claude Code:
+In Claude Code, use the slash command, or just ask:
 
 ```text
-/export-chat                          this chat, just the conversation → ./claude-exports/<date>_<title>_<id>.md
+/export-chat                          this chat, just the conversation → ./chat-exports/<date>_<title>_<id>.md
 /export-chat --full                   everything: thinking, tool calls, file reads, diffs, subagents, hooks
-/export-chat -f all --open            Markdown + HTML + JSON, then open the result
-/export-chat -f html                  just the searchable HTML page
+/export-chat -f html --open           the searchable HTML page, opened when done
 /export-chat --redact                 mask keys, tokens, passwords, emails and your home folder
-/export-chat --list                   sessions for this folder (--all for every project)
+/export-chat --list                   sessions for this folder
 /export-chat previous                 the session before this one
-/export-chat 6774823e                 a session by id (a prefix works)
 /export-chat "login bug"              the session whose title or first prompt matches
 ```
 
-Or just ask: *"export this chat"*, *"export everything from this session"*, or *"export my last session as HTML, redacted"*.
+In Codex, Gemini CLI, Cursor or any other agent with it installed, ask: *"export this chat"*, *"export everything from this session as HTML"*, or *"list my recent Codex sessions"*.
 
-From a terminal, run the same options from the project folder:
+From a terminal:
 
 ```bash
-cc-exporter --list
+unabridged --list --from all
 ```
 
 ```bash
-cc-exporter latest -f html --open
+unabridged latest --from codex -f html --open
 ```
 
 > [!TIP]
-> Exports go to `./claude-exports/`, which writes its own `.gitignore`, so they never end up in a commit. Pick another folder with `-o`.
+> Exports go to `./chat-exports/`, which writes its own `.gitignore`, so they never end up in a commit. Pick another folder with `-o`.
 
 ### Options
 
 | Option | Meaning |
 |---|---|
-| `-f, --format` | `md` (default), `html`, `json`, or `all`; combine with commas: `-f md,html` |
 | `--full` | everything, as in the table below (aliases `--extended`, `-F`, `-d full`) |
-| `-d, --detail` | `conversation` (default) · `standard` · `full` (see below) |
+| `-f, --format` | `md` (default), `html`, `json`, or `all`; combine with commas: `-f md,html` |
+| `--from` | `claude`, `codex` or `all` (default: the agent you run it in, else Claude Code); `--codex` for short |
+| `-d, --detail` | `conversation` (default) · `standard` · `full` |
 | `--thinking` / `--no-thinking` | add thinking to the conversation view, or drop it from `--full` |
-| `-o, --out DIR` | output folder (default `./claude-exports`; `~/claude-exports` outside a project) |
+| `-o, --out DIR` | output folder (default `./chat-exports`; `~/chat-exports` outside a project) |
 | `--redact` | mask API keys and tokens (Anthropic, OpenAI, GitHub, GitLab, AWS, Slack, Google, Stripe, Supabase, npm, JWTs, bearer tokens, private keys), `password=…` values, emails and your home folder |
 | `--no-subagents` · `--no-images` | leave subagent transcripts or images out |
 | `--max-output N` | cut each tool output or file body to N characters |
-| `--raw` | also copy the raw JSONL transcript and its side files |
+| `--raw` | also copy the raw transcript files |
 | `--open` · `--json` | open the export when done · print the result as JSON |
 | `--list [--all] [--search TEXT] [--limit N]` | list sessions |
 
@@ -177,86 +191,98 @@ By default an export is **just the conversation**: what you typed and what the a
 | | conversation (default) | standard | full (`--full`) |
 |---|:-:|:-:|:-:|
 | Your prompts, slash commands, `!` shell commands, and the replies | ✓ | ✓ | ✓ |
-| Thinking blocks | with `--thinking` | ✓ | ✓ |
+| Thinking blocks / reasoning summaries | with `--thinking` | ✓ | ✓ |
 | Tool calls with inputs and outputs, file reads, diffs, images | | ✓ | ✓ |
-| Subagent transcripts | | ✓ | ✓ |
+| Subagent transcripts and Codex review threads | | ✓ | ✓ |
 | Compactions and their summaries, API errors, hook runs | | ✓ | ✓ |
-| Injected context (CLAUDE.md, environment, reminders, skill listings) | | | ✓ |
+| Injected context (CLAUDE.md, AGENTS.md, environment, reminders, skill listings) | | | ✓ |
 | System prompt snapshot, per-message ids, tokens and stop reasons | | | ✓ |
 
-The **HTML** page needs no network connection. It has search (press `/`), a prompt index, filters for thinking, tools, context, system and metadata, expand/collapse all, light and dark themes, and a print layout for saving as PDF. The **Markdown** file uses `<details>` for collapsible parts, and its images go in a `_files` folder beside it. The **JSON** has the merged, nested session model.
+The **HTML** page needs no network connection. It has search (press `/`), a prompt index, filters, light and dark themes, and a print layout for saving as PDF. The **Markdown** file uses `<details>` for collapsible parts, and its images go in a `_files` folder beside it. The **JSON** holds the merged, nested session model.
 
-## Getting the thinking text
+## Use it from any agent
 
-By default Claude Code saves thinking **encrypted**: the transcript keeps only a signature, so no tool can show what Claude thought. Exports mark those blocks "not stored in the transcript". To keep readable thinking summaries in new sessions, add this to `~/.claude/settings.json`:
-
-```json
-{ "showThinkingSummaries": true }
-```
-
-Claude Code then requests thinking summaries, shows them in the conversation (and in the transcript view, `ctrl+o`) and stores them, so cc-exporter can export them. It applies to sessions started afterwards; older thinking stays encrypted. The exporter reminds you whenever it finds thinking without text.
-
-## Use it as an MCP connector
-
-The connector has three tools: `list_sessions`, `read_session` (returns a transcript as Markdown, page by page, so Claude can summarize or search it) and `export_session`. The Claude Code plugin already includes it. For other clients:
-
-[![Add to Cursor](https://img.shields.io/badge/Cursor-Add_cc--exporter-000000?style=flat-square&logo=cursor&logoColor=white)](https://cursor.com/install-mcp?name=cc-exporter&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsImh0dHBzOi8vZ2l0aHViLmNvbS9zYWllZXNoYi9jYy1leHBvcnRlci9hcmNoaXZlL3JlZnMvdGFncy92MC4xLjEudGFyLmd6IiwibWNwIl19)
-[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_cc--exporter-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=cc-exporter&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22https%3A//github.com/saieeshb/cc-exporter/archive/refs/tags/v0.1.1.tar.gz%22%2C%22mcp%22%5D%7D)
-
-<details>
-<summary><b>Claude Code (without the plugin)</b></summary>
-
-<br>
+`unabridged setup` finds the coding agents on your computer, shows what it will change, and asks before doing it.
+- **Agents with their own plugin system** (Claude Code, Codex, Gemini CLI) get the plugin or extension through their CLI.
+- **The others** get the MCP server in their config file and the export skill in their skills folder. Each file is backed up first, and `unabridged setup --remove` undoes everything.
 
 ```bash
-claude mcp add cc-exporter -- npx -y https://github.com/saieeshb/cc-exporter/archive/refs/tags/v0.1.1.tar.gz mcp
+unabridged setup
 ```
 
-If you installed with curl, PowerShell or Homebrew: `claude mcp add cc-exporter -- cc-exporter mcp`
+```bash
+unabridged setup --list
+```
 
-</details>
+```bash
+unabridged setup --agent cursor,windsurf --yes
+```
+
+| Agent | What setup adds |
+|---|---|
+| Claude Code | the plugin: `/export-chat`, the skill and the MCP server |
+| Codex | the plugin: the skill and the MCP server |
+| Gemini CLI | the extension (MCP server + context) |
+| Cursor, Windsurf, Kiro, Qwen Code, Factory Droid | MCP server + skill |
+| VS Code (Copilot), GitHub Copilot CLI | MCP server + skill (`~/.copilot/skills`) |
+| OpenCode, Antigravity | MCP server + skill |
+| Claude Desktop, Cline | MCP server |
+| Goose, Zed | prints the snippet to add by hand |
+| Amp, Warp, Pi and others that read `~/.agents/skills` | skill |
+
+The connector has three tools: `list_sessions`, `read_session` (returns a transcript as Markdown, page by page, so the agent can summarize or search it) and `export_session`. Other agents can read and export your Claude Code and Codex sessions, but not their own chats.
 
 <details>
-<summary><b>Claude desktop app</b></summary>
+<summary><b>Add the MCP server by hand</b></summary>
 
 <br>
 
-Easiest: download [`cc-exporter.mcpb`](https://github.com/saieeshb/cc-exporter/releases/latest/download/cc-exporter.mcpb) and open it. You can also go to Settings → Extensions → Install extension.
+Claude Code (without the plugin):
 
-Or add this to `claude_desktop_config.json` (Settings → Developer → Edit Config) and restart the app:
+```bash
+claude mcp add unabridged -- npx -y https://github.com/saieeshb/unabridged/archive/refs/tags/v0.2.0.tar.gz mcp
+```
+
+Codex (without the plugin):
+
+```bash
+codex mcp add unabridged -- npx -y https://github.com/saieeshb/unabridged/archive/refs/tags/v0.2.0.tar.gz mcp
+```
+
+Any client with an `mcpServers` config (Claude Desktop, Cursor, Windsurf, …):
 
 ```json
 {
   "mcpServers": {
-    "cc-exporter": {
+    "unabridged": {
       "command": "npx",
-      "args": ["-y", "https://github.com/saieeshb/cc-exporter/archive/refs/tags/v0.1.1.tar.gz", "mcp"]
+      "args": ["-y", "https://github.com/saieeshb/unabridged/archive/refs/tags/v0.2.0.tar.gz", "mcp"]
     }
   }
 }
 ```
 
-</details>
-
-<details>
-<summary><b>Any other MCP client</b></summary>
-
-<br>
-
-It's a stdio server. Run `npx -y https://github.com/saieeshb/cc-exporter/archive/refs/tags/v0.1.1.tar.gz mcp`, or `cc-exporter mcp` once installed. The JSON block above works in most clients' `mcpServers` config.
+If unabridged is installed, use `"command": "unabridged", "args": ["mcp"]` instead.
 
 </details>
 
-Then ask: *"list my recent Claude Code sessions"*, *"summarize yesterday's session in the api repo"*, or *"export my last session as HTML"*.
+## Getting the thinking text
+
+Both agents keep most thinking **encrypted**, so no tool can show it. unabridged marks those blocks as "not stored". To keep readable summaries in new sessions:
+
+- **Claude Code**: add `"showThinkingSummaries": true` to `~/.claude/settings.json`.
+- **Codex**: add `model_reasoning_summary = "detailed"` to `~/.codex/config.toml`.
+
+This applies to sessions started afterwards; older thinking stays encrypted. The exporter reminds you when it finds thinking without text.
 
 ## FAQ
 
 <details>
-<summary><b>How is this different from Claude Code's built-in <code>/export</code>?</b></summary>
+<summary><b>How is this different from the agents' own export?</b></summary>
 
 <br>
 
-`/export` copies the visible conversation as plain text. cc-exporter reads the full transcript. That adds thinking, every tool call with its complete input and output, Edit diffs, subagent transcripts, images, large outputs Claude Code saved to disk, context the harness injected, compactions, errors, tokens and cost. It also works for past sessions.
+Claude Code's `/export` copies the visible conversation as plain text, and Codex has no export at all. unabridged gives you that same clean conversation as Markdown or HTML by default. With `--full` it adds thinking, every tool call with its complete input and output, Edit diffs, subagent threads, images, saved large outputs, injected context, compactions, errors, tokens and cost. It also works for past sessions.
 
 </details>
 
@@ -265,7 +291,7 @@ Then ask: *"list my recent Claude Code sessions"*, *"summarize yesterday's sessi
 
 <br>
 
-No. It only reads Claude Code's local transcripts and writes files where you tell it. The HTML export makes no network requests.
+No. It only reads the agents' local transcripts and writes files where you tell it. The HTML export makes no network requests.
 
 </details>
 
@@ -274,7 +300,7 @@ No. It only reads Claude Code's local transcripts and writes files where you tel
 
 <br>
 
-An export contains everything from the chat, including file contents Claude read, command output, and any secret that appeared in either. Use `--redact`, then still skim the result, since redaction only knows common formats.
+A conversation export has only what was said. A `--full` export also contains file contents the agent read, command output, and any secret that appeared in either. Use `--redact`, then still skim the result, since redaction only knows common formats.
 
 </details>
 
@@ -283,7 +309,7 @@ An export contains everything from the chat, including file contents Claude read
 
 <br>
 
-Claude Code's transcript is append-only, so messages from a rewound or edited branch stay in the file. The export shows the full history in the order it happened.
+The transcripts are append-only, so messages from a rewound or edited branch stay in the file. The export shows the full history in the order it happened.
 
 </details>
 
@@ -292,7 +318,10 @@ Claude Code's transcript is append-only, so messages from a rewound or edited br
 
 <br>
 
-In `~/.claude/projects/` (`%USERPROFILE%\.claude\projects\` on Windows), or under `CLAUDE_CONFIG_DIR` if you set it. Claude Code deletes transcripts after 30 days unless you raise `cleanupPeriodDays` in its settings, so export what you want to keep.
+- **Claude Code** keeps them in `~/.claude/projects/` (or under `CLAUDE_CONFIG_DIR`) and deletes them after 30 days unless you raise `cleanupPeriodDays`.
+- **Codex** keeps them in `~/.codex/sessions/` and moves older ones to `archived_sessions/` (or under `CODEX_HOME`). Reading archived sessions needs Node 22.15+.
+
+Export what you want to keep.
 
 </details>
 
@@ -311,10 +340,10 @@ Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for
 
 ## Support
 
-If cc-exporter saved you some time, you can [buy me a coffee](https://buymeacoffee.com/saieeesh) ☕. Thank you!
+If unabridged saved you some time, you can [buy me a coffee](https://buymeacoffee.com/saieeesh) ☕. Thank you!
 
 <a href="https://buymeacoffee.com/saieeesh"><img alt="Buy me a coffee" src="https://img.shields.io/badge/Buy_me_a_coffee-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=black" height="36"></a>
 
 ## License
 
-[MIT](LICENSE) © Saieesh Bairam. Not affiliated with Anthropic. Claude and Claude Code are trademarks of Anthropic.
+[MIT](LICENSE) © Saieesh Bairam. Not affiliated with Anthropic or OpenAI. Claude and Claude Code are trademarks of Anthropic; Codex is a trademark of OpenAI.

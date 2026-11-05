@@ -1,24 +1,25 @@
 {
-  "name": "cc-exporter",
-  "version": "0.1.1",
-  "description": "Export Claude Code chats in full detail to Markdown, HTML or JSON: Claude Code plugin, CLI and MCP server.",
+  "name": "unabridged",
+  "version": "0.2.0",
+  "description": "Export AI coding agent chats (Claude Code, Codex) unabridged: Markdown, HTML or JSON, from the plain conversation to every tool call. CLI, MCP server and agent plugins.",
   "type": "module",
   "license": "MIT",
   "private": true,
   "bin": {
-    "cc-exporter": "bin/cc-exporter.mjs"
+    "unabridged": "bin/unabridged.mjs",
+    "cc-exporter": "bin/unabridged.mjs"
   },
   "engines": {
     "node": ">=18"
   },
   "scripts": {
-    "test": "node --test test/export.test.mjs",
+    "test": "node --test test/export.test.mjs test/codex.test.mjs test/setup.test.mjs",
     "build:mcpb": "node scripts/build-mcpb.mjs",
     "validate": "claude plugin validate ."
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/saieeshb/cc-exporter.git"
+    "url": "https://github.com/saieeshb/unabridged.git"
   },
   "files": [
     "bin",
@@ -27,18 +28,25 @@
     "scripts",
     "commands",
     "skills",
+    "assets/icon.png",
     ".claude-plugin",
+    ".codex-plugin",
+    ".agents",
+    "gemini-extension.json",
+    "qwen-extension.json",
+    "GEMINI.md",
     "manifest.json",
     "README.md",
     "LICENSE"
   ],
   "keywords": [
-    "claude",
     "claude-code",
+    "codex",
     "mcp",
     "export",
     "transcript",
+    "chat-history",
     "markdown",
-    "html"
+    "agents"
   ]
 }

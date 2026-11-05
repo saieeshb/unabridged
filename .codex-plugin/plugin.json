@@ -1,0 +1,32 @@
+{
+  "name": "unabridged",
+  "version": "0.2.0",
+  "description": "Export Codex and Claude Code chats unabridged: just the conversation by default, or every tool call, file read, diff and subagent with --full. Markdown, HTML or JSON.",
+  "author": {
+    "name": "Saieesh Bairam",
+    "url": "https://github.com/saieeshb"
+  },
+  "homepage": "https://github.com/saieeshb/unabridged",
+  "repository": "https://github.com/saieeshb/unabridged",
+  "license": "MIT",
+  "keywords": ["export", "transcript", "chat-history", "codex", "claude-code", "markdown", "mcp"],
+  "skills": "./skills/",
+  "mcpServers": "./.codex-plugin/mcp.json",
+  "interface": {
+    "displayName": "Unabridged",
+    "shortDescription": "Export your agent chats in full",
+    "longDescription": "Export this Codex thread, or any past Codex or Claude Code session on this computer, as Markdown, a searchable HTML page or JSON. By default you get just the conversation; ask for everything to include reasoning summaries, tool calls and their output, subagent threads and token usage. Nothing is uploaded.",
+    "developerName": "Saieesh Bairam",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "websiteURL": "https://github.com/saieeshb/unabridged",
+    "defaultPrompt": [
+      "Export this chat as Markdown.",
+      "Export everything from this thread, tool calls included, as HTML.",
+      "List my recent Codex and Claude Code sessions."
+    ],
+    "brandColor": "#C2541F",
+    "composerIcon": "./assets/icon.png",
+    "logo": "./assets/icon.png"
+  }
+}

@@ -18,11 +18,12 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - name: Unit and end-to-end tests
-        run: node --test test/export.test.mjs
+        run: node --test test/export.test.mjs test/codex.test.mjs test/setup.test.mjs
       - name: CLI entry point
         run: |
-          node bin/cc-exporter.mjs --version
-          node bin/cc-exporter.mjs --help
+          node bin/unabridged.mjs --version
+          node bin/unabridged.mjs --help
+          node bin/unabridged.mjs setup --list
       - name: Build the desktop extension
         run: node scripts/build-mcpb.mjs
 
@@ -41,31 +42,31 @@ jobs:
       - name: install.sh (this commit)
         if: runner.os != 'Windows'
         env:
-          CC_EXPORTER_REF: ${{ github.sha }}
-          CC_EXPORTER_NO_PLUGIN: '1'
+          UNABRIDGED_REF: ${{ github.sha }}
+          UNABRIDGED_NO_SETUP: '1'
         run: |
           bash install.sh
-          "$HOME/.local/bin/cc-exporter" --version
-          "$HOME/.local/bin/cc-exporter" --list --all
+          "$HOME/.local/bin/unabridged" --version
+          "$HOME/.local/bin/unabridged" --list --all
       - name: install.ps1 in PowerShell 7 (this commit)
         if: runner.os == 'Windows'
         shell: pwsh
         env:
-          CC_EXPORTER_REF: ${{ github.sha }}
-          CC_EXPORTER_NO_PLUGIN: '1'
+          UNABRIDGED_REF: ${{ github.sha }}
+          UNABRIDGED_NO_SETUP: '1'
         run: |
           ./install.ps1
-          & "$env:LOCALAPPDATA\cc-exporter\bin\cc-exporter.cmd" --version
-          & "$env:LOCALAPPDATA\cc-exporter\bin\cc-exporter.cmd" --list --all
+          & "$env:LOCALAPPDATA\unabridged\bin\unabridged.cmd" --version
+          & "$env:LOCALAPPDATA\unabridged\bin\unabridged.cmd" --list --all
       - name: install.ps1 in Windows PowerShell 5.1 (this commit)
         if: runner.os == 'Windows'
         shell: powershell
         env:
-          CC_EXPORTER_REF: ${{ github.sha }}
-          CC_EXPORTER_NO_PLUGIN: '1'
+          UNABRIDGED_REF: ${{ github.sha }}
+          UNABRIDGED_NO_SETUP: '1'
         run: |
           ./install.ps1
-          & "$env:LOCALAPPDATA\cc-exporter\bin\cc-exporter.cmd" --version
+          & "$env:LOCALAPPDATA\unabridged\bin\unabridged.cmd" --version
       - name: npx from the GitHub tarball (this commit)
         run: npx -y "https://github.com/${{ github.repository }}/archive/${{ github.sha }}.tar.gz" --version
 
@@ -77,6 +78,6 @@ jobs:
         run: |
           brew tap saieeshb/tap
           brew trust saieeshb/tap 2>/dev/null || true
-          brew install cc-exporter
-          cc-exporter --version
-          brew test cc-exporter
+          brew install unabridged
+          unabridged --version
+          brew test unabridged

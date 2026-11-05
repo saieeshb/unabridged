@@ -13,7 +13,7 @@ body:
     id: version
     attributes:
       label: Versions
-      description: cc-exporter (`cc-exporter --version`), Claude Code (`claude --version`), Node (`node -v`)
+      description: unabridged (`unabridged --version`), your agent (`claude --version` / `codex --version`), Node (`node -v`)
     validations:
       required: true
   - type: dropdown
@@ -27,7 +27,7 @@ body:
     id: how
     attributes:
       label: How you ran it
-      options: [/export-chat slash command, Asked Claude in plain words, MCP connector, CLI, Installer script]
+      options: [/export-chat slash command, Asked the agent in plain words, MCP connector, CLI, unabridged setup, Installer script, Homebrew]
   - type: textarea
     id: snippet
     attributes:

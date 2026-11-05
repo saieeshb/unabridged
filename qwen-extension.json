@@ -1,0 +1,12 @@
+{
+  "name": "unabridged",
+  "version": "0.2.0",
+  "description": "List, read and export Claude Code and Codex chat sessions as Markdown, HTML or JSON: just the conversation, or everything.",
+  "contextFileName": "GEMINI.md",
+  "mcpServers": {
+    "unabridged": {
+      "command": "node",
+      "args": ["${extensionPath}${/}bin${/}unabridged.mjs", "mcp"]
+    }
+  }
+}

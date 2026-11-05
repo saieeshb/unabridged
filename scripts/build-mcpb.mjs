@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Build dist/cc-exporter.mcpb (a zip with manifest.json at its root) for Claude Desktop.
+// Build dist/unabridged.mcpb (a zip with manifest.json at its root) for Claude Desktop.
 // Pure Node, so it runs the same on Windows, macOS and Linux.
 
 import fs from 'node:fs';
@@ -8,7 +8,7 @@ import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const OUT = path.join(ROOT, 'dist', 'cc-exporter.mcpb');
+const OUT = path.join(ROOT, 'dist', 'unabridged.mcpb');
 const INCLUDE = ['manifest.json', 'package.json', 'README.md', 'LICENSE', 'assets/icon.png', 'bin', 'mcp', 'lib', 'scripts/export-chat.mjs'];
 const SKIP = new Set(['.DS_Store', 'Thumbs.db']);
 

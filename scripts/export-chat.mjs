@@ -1,19 +1,21 @@
 #!/usr/bin/env node
-// cc-exporter CLI — export a Claude Code session transcript in full detail.
+// unabridged CLI — export a Claude Code session transcript in full detail.
 
 import { spawn } from 'node:child_process';
 import { exportSession, describeResult } from '../lib/export.mjs';
-import { listSessions } from '../lib/locate.mjs';
+import { listAll, HARNESS } from '../lib/sources.mjs';
 import { VERSION, fmtBytes, fmtTime, truncate, splitArgs } from '../lib/util.mjs';
 
-const HELP = `cc-exporter ${VERSION} — export a Claude Code chat in full detail
+const HELP = `unabridged ${VERSION} — export AI coding agent chats (Claude Code, Codex)
 
 Usage
-  export-chat [session] [options]
-  export-chat --list [--all] [--limit N] [--search TEXT]
+  unabridged [session] [options]
+  unabridged setup                 add it to your agents (Claude Code, Codex, Cursor, Gemini…)
+  unabridged mcp                   run the MCP server on stdio
+  unabridged --list [--all] [--from all] [--limit N] [--search TEXT]
 
 Session (default: current)
-  current            the session running this command ($CLAUDE_CODE_SESSION_ID),
+  current            the session running this command (Claude Code or Codex),
                      else the newest session for this folder
   latest | previous  newest / second-newest session for this folder
   <id> | <prefix>    a session id or the start of one (any project)
@@ -21,6 +23,8 @@ Session (default: current)
   <text>             the one session whose title or first prompt contains it
 
 Options
+      --from AGENT    claude | codex | all (default: the agent you run this in, else claude)
+      --codex         same as --from codex
   -f, --format LIST   md, html, json or all (default: md)
       --full          everything: thinking, every tool call with its input and output,
                       file reads, diffs, subagents, hooks, injected context, system prompt,
@@ -31,7 +35,7 @@ Options
                         full:         same as --full
       --thinking      include thinking blocks at any detail level
       --no-thinking   leave thinking blocks out
-  -o, --out DIR       output folder (default: ./claude-exports, which git-ignores itself)
+  -o, --out DIR       output folder (default: ./chat-exports, which git-ignores itself)
       --redact        mask API keys, tokens, passwords, emails and your home path
       --no-subagents  leave out subagent transcripts
       --no-images     leave out images and attached documents
@@ -74,6 +78,9 @@ function parseArgs(argv) {
       case '--open': o.open = true; break;
       case '--json': o.json = true; break;
       case '-l': case '--list': o.list = true; break;
+      case '--from': case '--source': o.from = val(); break;
+      case '--codex': o.from = 'codex'; break;
+      case '--claude': o.from = 'claude'; break;
       case '--all': o.all = true; break;
       case '--limit': o.limit = parseInt(val(), 10) || 20; break;
       case '--search': case '-s': o.search = val(); break;
@@ -111,16 +118,18 @@ function main() {
   if (o.version) return void console.log(VERSION);
 
   if (o.list) {
-    const rows = listSessions({ cwd: process.cwd(), all: o.all, limit: o.limit ?? 20, query: o.search });
+    const rows = listAll({ cwd: process.cwd(), all: o.all, limit: o.limit ?? 20, query: o.search, from: o.from });
     if (o.json) return void console.log(JSON.stringify(rows, null, 2));
-    if (!rows.length) return void console.log(o.all ? 'No Claude Code sessions found.' : 'No sessions for this folder. Try --all.');
-    const cur = process.env.CLAUDE_CODE_SESSION_ID;
+    if (!rows.length) return void console.log(o.all ? 'No sessions found.' : 'No sessions for this folder. Try --all, or --from all to include Codex.');
+    const here = new Set([process.env.CLAUDE_CODE_SESSION_ID, process.env.CODEX_THREAD_ID].filter(Boolean));
+    const mixed = new Set(rows.map((r) => r.source)).size > 1 || rows.some((r) => r.source === 'codex');
     for (const r of rows) {
+      const agent = mixed ? `${HARNESS[r.source === 'codex' ? 'codex' : 'claude'].product.padEnd(11)} ` : '';
       console.log(
-        `${r.id === cur ? '*' : ' '} ${r.id}  ${fmtTime(r.modified)}  ${fmtBytes(r.size).padStart(8)}  ${truncate(r.title ?? '(untitled)', 60)}${o.all && r.cwd ? `  — ${r.cwd}` : ''}`,
+        `${here.has(r.id) ? '*' : ' '} ${r.id}  ${agent}${fmtTime(r.modified ?? new Date(r.mtimeMs).toISOString())}  ${fmtBytes(r.size).padStart(8)}  ${truncate(r.title ?? '(untitled)', 60)}${o.all && r.cwd ? `  — ${r.cwd}` : ''}`,
       );
     }
-    if (cur && rows.some((r) => r.id === cur)) console.log('\n* = this session');
+    if (rows.some((r) => here.has(r.id))) console.log('\n* = this session');
     return;
   }
 
