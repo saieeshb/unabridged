@@ -6,7 +6,7 @@
 
 ### Export any Claude Code chat in full detail.
 
-**Every prompt, reply, thinking block, tool call, diff and subagent, saved as Markdown, HTML or JSON.**
+**The conversation by default; with `--full`, every thinking block, tool call, diff and subagent too. Markdown, HTML or JSON.**
 
 [![test](https://img.shields.io/github/actions/workflow/status/saieeshb/cc-exporter/test.yml?branch=main&style=flat-square&label=tests)](https://github.com/saieeshb/cc-exporter/actions/workflows/test.yml)
 [![release](https://img.shields.io/github/v/release/saieeshb/cc-exporter?style=flat-square&color=c2541f)](https://github.com/saieeshb/cc-exporter/releases/latest)
@@ -79,7 +79,7 @@ Pick whichever fits. Each one needs [Node.js 18+](https://nodejs.org).
 | **macOS / Linux**: one line | `curl -fsSL https://raw.githubusercontent.com/saieeshb/cc-exporter/main/install.sh \| bash` |
 | **Windows**: PowerShell | `irm https://raw.githubusercontent.com/saieeshb/cc-exporter/main/install.ps1 \| iex` |
 | **Homebrew** | `brew tap saieeshb/tap && brew trust saieeshb/tap && brew install cc-exporter` |
-| **No install**: npx | `npx -y https://github.com/saieeshb/cc-exporter/archive/refs/tags/v0.1.0.tar.gz --help` |
+| **No install**: npx | `npx -y https://github.com/saieeshb/cc-exporter/archive/refs/tags/v0.1.1.tar.gz --help` |
 | **Claude desktop app**: chat | Download [`cc-exporter.mcpb`](https://github.com/saieeshb/cc-exporter/releases/latest/download/cc-exporter.mcpb) and open it |
 
 The curl and PowerShell installers add a `cc-exporter` command. If they find the `claude` command, they also install the Claude Code plugin.
@@ -128,18 +128,18 @@ To uninstall, delete that folder and the `cc-exporter` command. For the plugin, 
 In Claude Code:
 
 ```text
-/export-chat                          this chat → ./claude-exports/<date>_<title>_<id>.md
+/export-chat                          this chat, just the conversation → ./claude-exports/<date>_<title>_<id>.md
+/export-chat --full                   everything: thinking, tool calls, file reads, diffs, subagents, hooks
 /export-chat -f all --open            Markdown + HTML + JSON, then open the result
 /export-chat -f html                  just the searchable HTML page
 /export-chat --redact                 mask keys, tokens, passwords, emails and your home folder
-/export-chat -d conversation          prompts and replies only
 /export-chat --list                   sessions for this folder (--all for every project)
 /export-chat previous                 the session before this one
 /export-chat 6774823e                 a session by id (a prefix works)
 /export-chat "login bug"              the session whose title or first prompt matches
 ```
 
-Or just ask: *"export this chat"*, or *"export my last session as HTML, redacted"*.
+Or just ask: *"export this chat"*, *"export everything from this session"*, or *"export my last session as HTML, redacted"*.
 
 From a terminal, run the same options from the project folder:
 
@@ -159,8 +159,9 @@ cc-exporter latest -f html --open
 | Option | Meaning |
 |---|---|
 | `-f, --format` | `md` (default), `html`, `json`, or `all`; combine with commas: `-f md,html` |
-| `-d, --detail` | `full` (default) · `standard` · `conversation` (see below) |
-| `--thinking` / `--no-thinking` | force thinking blocks on or off at any detail level |
+| `--full` | everything, as in the table below (aliases `--extended`, `-F`, `-d full`) |
+| `-d, --detail` | `conversation` (default) · `standard` · `full` (see below) |
+| `--thinking` / `--no-thinking` | add thinking to the conversation view, or drop it from `--full` |
 | `-o, --out DIR` | output folder (default `./claude-exports`; `~/claude-exports` outside a project) |
 | `--redact` | mask API keys and tokens (Anthropic, OpenAI, GitHub, GitLab, AWS, Slack, Google, Stripe, Supabase, npm, JWTs, bearer tokens, private keys), `password=…` values, emails and your home folder |
 | `--no-subagents` · `--no-images` | leave subagent transcripts or images out |
@@ -171,15 +172,17 @@ cc-exporter latest -f html --open
 
 ## What's exported
 
-| | full | standard | conversation |
+By default an export is **just the conversation**: what you typed and what the agent replied, the way you read it in the chat. Add `--full` for everything else.
+
+| | conversation (default) | standard | full (`--full`) |
 |---|:-:|:-:|:-:|
-| Prompts and replies, slash commands, `!` shell commands | ✓ | ✓ | ✓ |
-| Thinking blocks | ✓ | ✓ | with `--thinking` |
-| Tool calls with inputs and outputs, diffs, images | ✓ | ✓ | count only |
-| Subagent transcripts | ✓ | ✓ | |
-| Compactions and their summaries, API errors, hook runs | ✓ | ✓ | errors only |
-| Injected context (CLAUDE.md, environment, reminders, skill listings) | ✓ | | |
-| System prompt snapshot, per-message ids, tokens and stop reasons | ✓ | | |
+| Your prompts, slash commands, `!` shell commands, and the replies | ✓ | ✓ | ✓ |
+| Thinking blocks | with `--thinking` | ✓ | ✓ |
+| Tool calls with inputs and outputs, file reads, diffs, images | | ✓ | ✓ |
+| Subagent transcripts | | ✓ | ✓ |
+| Compactions and their summaries, API errors, hook runs | | ✓ | ✓ |
+| Injected context (CLAUDE.md, environment, reminders, skill listings) | | | ✓ |
+| System prompt snapshot, per-message ids, tokens and stop reasons | | | ✓ |
 
 The **HTML** page needs no network connection. It has search (press `/`), a prompt index, filters for thinking, tools, context, system and metadata, expand/collapse all, light and dark themes, and a print layout for saving as PDF. The **Markdown** file uses `<details>` for collapsible parts, and its images go in a `_files` folder beside it. The **JSON** has the merged, nested session model.
 
@@ -197,8 +200,8 @@ Claude Code then requests thinking summaries, shows them in the conversation (an
 
 The connector has three tools: `list_sessions`, `read_session` (returns a transcript as Markdown, page by page, so Claude can summarize or search it) and `export_session`. The Claude Code plugin already includes it. For other clients:
 
-[![Add to Cursor](https://img.shields.io/badge/Cursor-Add_cc--exporter-000000?style=flat-square&logo=cursor&logoColor=white)](https://cursor.com/install-mcp?name=cc-exporter&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsImh0dHBzOi8vZ2l0aHViLmNvbS9zYWllZXNoYi9jYy1leHBvcnRlci9hcmNoaXZlL3JlZnMvdGFncy92MC4xLjAudGFyLmd6IiwibWNwIl19)
-[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_cc--exporter-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=cc-exporter&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22https%3A//github.com/saieeshb/cc-exporter/archive/refs/tags/v0.1.0.tar.gz%22%2C%22mcp%22%5D%7D)
+[![Add to Cursor](https://img.shields.io/badge/Cursor-Add_cc--exporter-000000?style=flat-square&logo=cursor&logoColor=white)](https://cursor.com/install-mcp?name=cc-exporter&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsImh0dHBzOi8vZ2l0aHViLmNvbS9zYWllZXNoYi9jYy1leHBvcnRlci9hcmNoaXZlL3JlZnMvdGFncy92MC4xLjEudGFyLmd6IiwibWNwIl19)
+[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_cc--exporter-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=cc-exporter&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22https%3A//github.com/saieeshb/cc-exporter/archive/refs/tags/v0.1.1.tar.gz%22%2C%22mcp%22%5D%7D)
 
 <details>
 <summary><b>Claude Code (without the plugin)</b></summary>
@@ -206,7 +209,7 @@ The connector has three tools: `list_sessions`, `read_session` (returns a transc
 <br>
 
 ```bash
-claude mcp add cc-exporter -- npx -y https://github.com/saieeshb/cc-exporter/archive/refs/tags/v0.1.0.tar.gz mcp
+claude mcp add cc-exporter -- npx -y https://github.com/saieeshb/cc-exporter/archive/refs/tags/v0.1.1.tar.gz mcp
 ```
 
 If you installed with curl, PowerShell or Homebrew: `claude mcp add cc-exporter -- cc-exporter mcp`
@@ -227,7 +230,7 @@ Or add this to `claude_desktop_config.json` (Settings → Developer → Edit Con
   "mcpServers": {
     "cc-exporter": {
       "command": "npx",
-      "args": ["-y", "https://github.com/saieeshb/cc-exporter/archive/refs/tags/v0.1.0.tar.gz", "mcp"]
+      "args": ["-y", "https://github.com/saieeshb/cc-exporter/archive/refs/tags/v0.1.1.tar.gz", "mcp"]
     }
   }
 }
@@ -240,7 +243,7 @@ Or add this to `claude_desktop_config.json` (Settings → Developer → Edit Con
 
 <br>
 
-It's a stdio server. Run `npx -y https://github.com/saieeshb/cc-exporter/archive/refs/tags/v0.1.0.tar.gz mcp`, or `cc-exporter mcp` once installed. The JSON block above works in most clients' `mcpServers` config.
+It's a stdio server. Run `npx -y https://github.com/saieeshb/cc-exporter/archive/refs/tags/v0.1.1.tar.gz mcp`, or `cc-exporter mcp` once installed. The JSON block above works in most clients' `mcpServers` config.
 
 </details>
 

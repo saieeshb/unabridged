@@ -1,6 +1,6 @@
 {
   "name": "cc-exporter",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Export Claude Code chats in full detail (prompts, replies, thinking, every tool call with its input and output, diffs, subagent transcripts, token usage) to Markdown, HTML or JSON. Adds /export-chat, a skill, and an MCP connector.",
   "author": {
     "name": "Saieesh Bairam",

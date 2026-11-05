@@ -1,6 +1,6 @@
 ---
 name: export-transcripts
-description: Export a Claude Code chat transcript in full detail — every prompt, reply, thinking block, tool call with its input and output, file diffs, subagent transcripts, injected context, token usage and cost — as a self-contained HTML page, Markdown and/or JSON. Use when the user asks to export, save, archive, back up, download, print or share this conversation or a past Claude Code session, or to find and list past sessions.
+description: Export a Claude Code chat as Markdown, a self-contained HTML page or JSON — by default just the conversation (prompts and replies), or in full detail (thinking, every tool call with its input and output, file diffs, subagent transcripts, injected context, tokens and cost) with --full. Use when the user asks to export, save, archive, back up, download, print or share this conversation or a past Claude Code session, or to find and list past sessions.
 ---
 
 # Exporting Claude Code chats
@@ -17,10 +17,10 @@ node "<plugin root>/scripts/export-chat.mjs" [session] [options]
 
 **Options**
 - `-f md` (the default), `-f html` for the searchable page, `-f json`, or `-f all`
-- `-d full` (default: everything), `-d standard` (no injected context or system prompt), `-d conversation` (prompts and replies only)
+- By default only the conversation is exported: the prompts and the replies. Add `--full` when the user wants everything (thinking, tool calls and their output, file reads, diffs, subagents, hooks, injected context, tokens and cost); `-d standard` is full minus injected context.
 - `-o DIR` output folder (default `./claude-exports`, which git-ignores itself)
 - `--redact` masks keys, tokens, passwords, emails and the home path. Suggest it when the user means to share the export.
-- `--thinking` keeps thinking blocks even at `-d conversation`; `--no-thinking` drops them
+- `--thinking` adds thinking blocks to the conversation view; `--no-thinking` drops them from `--full`
 - `--open` opens the export when done; `--no-images`, `--no-subagents`, `--max-output N`, `--raw` (also copy the raw JSONL)
 
 When it finishes, give the user each file as a markdown link plus the one-line stats it prints. Don't paste the transcript into the chat.

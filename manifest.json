@@ -2,7 +2,7 @@
   "manifest_version": "0.2",
   "name": "cc-exporter",
   "display_name": "Claude Code Chat Exporter",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "List, read and export your local Claude Code sessions in full detail (Markdown, HTML, JSON).",
   "long_description": "Reads the Claude Code transcripts stored on this computer (~/.claude/projects) and exports any session with every prompt, reply, thinking block, tool call with its input and output, file diff, subagent transcript, injected context and token usage. Exports are a self-contained searchable HTML page, Markdown with images saved beside it, and structured JSON. Optional redaction masks keys, tokens, passwords, emails and your home path. Nothing leaves your computer.",
   "author": {

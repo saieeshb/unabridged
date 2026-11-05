@@ -22,11 +22,13 @@ Session (default: current)
 
 Options
   -f, --format LIST   md, html, json or all (default: md)
-  -d, --detail LEVEL  full (default) | standard | conversation
-                        full:         everything — thinking, tool inputs/outputs, subagents,
-                                      injected context, hooks, system prompt, per-message metadata
-                        standard:     no injected context / system prompt / bookkeeping
-                        conversation: prompts and replies only (tool runs folded)
+      --full          everything: thinking, every tool call with its input and output,
+                      file reads, diffs, subagents, hooks, injected context, system prompt,
+                      tokens and cost  (alias: --extended, -F, -d full)
+  -d, --detail LEVEL  conversation (default) | standard | full
+                        conversation: only what was said: your prompts and the replies
+                        standard:     full, minus injected context / system prompt / bookkeeping
+                        full:         same as --full
       --thinking      include thinking blocks at any detail level
       --no-thinking   leave thinking blocks out
   -o, --out DIR       output folder (default: ./claude-exports, which git-ignores itself)
@@ -42,7 +44,7 @@ Options
 `;
 
 function parseArgs(argv) {
-  const o = { formats: undefined, detail: 'full' };
+  const o = { formats: undefined, detail: undefined };
   const rest = [];
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
@@ -58,6 +60,9 @@ function parseArgs(argv) {
       case '-v': case '--version': o.version = true; break;
       case '-f': case '--format': case '--formats': o.formats = val(); break;
       case '-d': case '--detail': o.detail = val(); break;
+      case '--full': case '-full': case '--extended': case '-extended': case '-F': o.detail = 'full'; break;
+      case '--standard': o.detail = 'standard'; break;
+      case '--conversation': o.detail = 'conversation'; break;
       case '-o': case '--out': case '--output': o.outDir = val(); break;
       case '--redact': o.redact = true; break;
       case '--thinking': o.thinking = true; break;

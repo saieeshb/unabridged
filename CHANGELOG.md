@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1 (2026-11-05)
+
+- **The default export is now just the conversation**: your prompts and the replies, without tool calls, file reads, hook output, injected context, compaction summaries or token tables. On a typical long session that is about 90 times smaller.
+- `--full` (also `--extended`, `-F`) exports everything, exactly as 0.1.0 did by default.
+- The MCP tools `export_session` and `read_session` default to the conversation too; pass `detail: "full"` for everything.
+
 ## 0.1.0 (2026-11-05)
 
 First release.

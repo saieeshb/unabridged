@@ -1,6 +1,6 @@
 {
   "name": "cc-exporter",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Export Claude Code chats in full detail to Markdown, HTML or JSON: Claude Code plugin, CLI and MCP server.",
   "type": "module",
   "license": "MIT",

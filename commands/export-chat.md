@@ -1,6 +1,6 @@
 ---
-description: Export this chat (or another Claude Code session) in full detail — Markdown by default, or HTML and JSON
-argument-hint: "[current|latest|previous|<session-id>|<title words>] [-f md|html|json|all] [-d full|standard|conversation] [--thinking|--no-thinking] [-o DIR] [--redact] [--open] [--list]"
+description: Export this chat (or another Claude Code session): just the conversation by default, or everything with --full
+argument-hint: "[current|latest|previous|<session-id>|<title words>] [--full] [-f md|html|json|all] [--thinking] [-o DIR] [--redact] [--open] [--list]"
 allowed-tools: Bash(node:*), PowerShell(node:*)
 ---
 

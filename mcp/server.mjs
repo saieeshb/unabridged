@@ -21,7 +21,7 @@ const PROJECT_PROP = { type: 'string', description: "Project folder whose sessio
 const DETAIL_PROP = {
   type: 'string',
   enum: ['full', 'standard', 'conversation'],
-  description: 'full: everything incl. thinking, tool I/O, subagents, injected context, system prompt. standard: no injected context. conversation: prompts and replies only.',
+  description: 'conversation (default): only the prompts and replies. full: everything, including thinking, every tool call with its input and output, subagents, hooks and injected context. standard: full minus injected context.',
 };
 
 const TOOLS = [
@@ -51,7 +51,7 @@ const TOOLS = [
       properties: {
         session: SESSION_PROP,
         project_path: PROJECT_PROP,
-        detail: { ...DETAIL_PROP, default: 'standard' },
+        detail: { ...DETAIL_PROP, default: 'conversation' },
         max_chars: { type: 'integer', minimum: 1000, maximum: 400000, default: 60000, description: 'Characters to return in this page.' },
         offset: { type: 'integer', minimum: 0, default: 0, description: 'Character offset to start from (from a previous page).' },
         max_output: { type: 'integer', minimum: 0, default: 4000, description: 'Cut each tool output to this many characters (0 = no limit).' },
@@ -74,7 +74,7 @@ const TOOLS = [
         project_path: PROJECT_PROP,
         formats: { type: 'array', items: { type: 'string', enum: ['md', 'html', 'json', 'all'] }, default: ['md'], description: 'Markdown by default; add "html" for the searchable page, "json" for data, or "all".' },
         thinking: { type: 'boolean', description: 'Include thinking blocks. Default: on for full and standard detail, off for conversation.' },
-        detail: { ...DETAIL_PROP, default: 'full' },
+        detail: { ...DETAIL_PROP, default: 'conversation' },
         output_dir: { type: 'string', description: 'Folder to write into (default: <project>/claude-exports, which git-ignores itself, or ~/claude-exports).' },
         redact: { type: 'boolean', default: false, description: 'Mask keys, tokens, passwords, emails and the home path — use before sharing.' },
         include_subagents: { type: 'boolean', default: true },
@@ -109,7 +109,7 @@ function callTool(name, a = {}) {
     }
     case 'read_session': {
       const info = resolveSession(a.session, { cwd });
-      const opts = { detail: a.detail ?? 'standard', thinking: a.thinking, maxOutput: a.max_output ?? 4000, redact: !!a.redact };
+      const opts = { detail: a.detail ?? 'conversation', thinking: a.thinking, maxOutput: a.max_output ?? 4000, redact: !!a.redact };
       const key = JSON.stringify([info.file, info.size, info.mtimeMs, opts]);
       if (readCache?.key !== key) {
         let model = loadSession(info.file, { subagents: true });
@@ -129,7 +129,7 @@ function callTool(name, a = {}) {
         session: a.session,
         cwd,
         formats: a.formats,
-        detail: a.detail ?? 'full',
+        detail: a.detail ?? 'conversation',
         thinking: a.thinking,
         outDir: a.output_dir,
         redact: !!a.redact,

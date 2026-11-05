@@ -17,7 +17,7 @@ const SID = '11111111-2222-4333-8444-555555555555';
 const PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
 const SECRET = 'sk-ant-api03-' + 'A'.repeat(40);
 
-let tmp, config, cwd, out;
+let tmp, config, cwd, out, codexHome;
 
 function rec(o) {
   return JSON.stringify({ sessionId: SID, cwd, version: '9.9.9', gitBranch: 'main', entrypoint: 'cli', ...o });
@@ -28,6 +28,9 @@ before(() => {
   config = path.join(tmp, 'config');
   cwd = path.join(tmp, 'My Project');
   out = path.join(tmp, 'out');
+  codexHome = path.join(tmp, 'codex');
+  process.env.CODEX_HOME = codexHome; // in-process imports too
+  process.env.CLAUDE_CONFIG_DIR = config;
   fs.mkdirSync(cwd, { recursive: true });
   const proj = path.join(config, 'projects', cwd.replace(/[^a-zA-Z0-9]/g, '-'));
   const side = path.join(proj, SID);
@@ -81,8 +84,9 @@ before(() => {
 after(() => fs.rmSync(tmp, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 }));
 
 function cli(args, extraEnv = {}) {
-  const env = { ...process.env, CLAUDE_CONFIG_DIR: config, ...extraEnv };
+  const env = { ...process.env, CLAUDE_CONFIG_DIR: config, CODEX_HOME: codexHome, ...extraEnv };
   delete env.CLAUDE_CODE_SESSION_ID;
+  delete env.CODEX_THREAD_ID;
   Object.assign(env, extraEnv);
   const r = spawnSync(process.execPath, [CLI, ...args], { cwd, env, encoding: 'utf8' });
   return r;
@@ -99,7 +103,7 @@ function outputs(dir) {
 
 test('exports the session in full detail to html, md and json', () => {
   const dir = path.join(out, 'full');
-  const r = cli(['-f', 'all', '-o', dir]);
+  const r = cli(['-f', 'all', '--full', '-o', dir]);
   assert.equal(r.status, 0, r.stderr);
   assert.match(r.stdout, /Fixture session/);
   const { files, html, md, json } = outputs(dir);
@@ -122,7 +126,7 @@ test('exports the session in full detail to html, md and json', () => {
     'Conversation compacted',
     'COMPACT-SUMMARY-TEXT',
     '529 Overloaded',
-    'sent while Claude was working',
+    'sent while the agent was working',
     'QUEUED-PROMPT',
     '/model opus',
     'Set model to opus',
@@ -175,7 +179,7 @@ test('conversation detail keeps prompts and replies only', () => {
   const { md, html } = outputs(dir);
   assert.ok(!md.includes('THINKING-TEXT') && !html.includes('THINKING-TEXT'));
   assert.ok(!md.includes('ENV-CONTEXT-TEXT'));
-  assert.ok(md.includes('used 2 tools') && md.includes('I will **check** it.'));
+  assert.ok(!md.includes('used 2 tools') && md.includes('I will **check** it.'));
   assert.ok(md.includes('Done. Key was'));
 });
 
@@ -212,7 +216,7 @@ test('thinking flags override the detail level', () => {
   assert.equal(cli(['-d', 'conversation', '--thinking', '-o', on]).status, 0);
   assert.ok(outputs(on).md.includes('THINKING-TEXT'));
   const off = path.join(out, 'think-off');
-  assert.equal(cli(['--no-thinking', '-f', 'md,json', '-o', off]).status, 0);
+  assert.equal(cli(['--no-thinking', '--full', '-f', 'md,json', '-o', off]).status, 0);
   const { md, json } = outputs(off);
   assert.ok(!md.includes('THINKING-TEXT'));
   assert.ok(!JSON.parse(json).events.some((e) => e.kind === 'assistant' && e.blocks.some((b) => b.type === 'thinking')));
@@ -281,7 +285,7 @@ test('review fixes: unsafe media, outside saved-output paths, redaction, argumen
     ].map((l) => JSON.stringify(l)).join('\n'),
   );
   const dir = path.join(out, 'outside');
-  assert.equal(cli([sid2, '-f', 'md', '-o', dir]).status, 0);
+  assert.equal(cli([sid2, '-f', 'md', '--extended', '-o', dir]).status, 0);
   assert.ok(!outputs(dir).md.includes('PRIVATE-KEY-MATERIAL'));
   fs.rmSync(path.join(proj, `${sid2}.jsonl`));
 
@@ -305,9 +309,30 @@ test('review fixes: unsafe media, outside saved-output paths, redaction, argumen
   assert.match(cli(['cafe']).stderr, /No session matches "cafe"/);
 });
 
+test('the default export is only the conversation; --full brings everything back', () => {
+  const dir = path.join(out, 'default-conv');
+  const r = cli(['-f', 'md,html', '-o', dir]);
+  assert.equal(r.status, 0, r.stderr);
+  const { md, html } = outputs(dir);
+  for (const text of [md, html]) {
+    for (const said of ['Fix the bug please', 'TRACEBACK LINE', 'I will', 'check', 'Done. Key was', 'QUEUED-PROMPT', '/model opus', 'Thanks']) assert.ok(text.includes(said), `keeps ${said}`);
+    for (const clutter of ['THINKING-TEXT', 'echo hi', '+b', 'SUBAGENT-REPLY', 'FULL-PERSISTED-OUTPUT', 'ENV-CONTEXT-TEXT', 'COMPACT-SUMMARY-TEXT', '529 Overloaded', 'Set model to opus', 'You are a test system prompt.', 'used 2 tools', 'Conversation compacted', 'data:image/png'])
+      assert.ok(!text.includes(clutter), `drops ${clutter}`);
+  }
+  assert.ok(!md.includes('## Prompts') && !md.includes('Tokens'), 'lean header');
+  const full = path.join(out, 'default-full');
+  for (const flag of ['--full', '--extended', '-full', '-F']) {
+    fs.rmSync(full, { recursive: true, force: true });
+    assert.equal(cli(['-f', 'md', flag, '-o', full]).status, 0, flag);
+    const fmd = outputs(full).md;
+    assert.ok(fmd.includes('THINKING-TEXT') && fmd.includes('echo hi') && fmd.includes('SUBAGENT-REPLY') && fmd.includes('ENV-CONTEXT-TEXT'), `${flag} is full detail`);
+  }
+});
+
 test('MCP server: initialize, list tools, call tools', async () => {
-  const env = { ...process.env, CLAUDE_CONFIG_DIR: config };
+  const env = { ...process.env, CLAUDE_CONFIG_DIR: config, CODEX_HOME: codexHome };
   delete env.CLAUDE_CODE_SESSION_ID;
+  delete env.CODEX_THREAD_ID;
   const child = spawn(process.execPath, [SERVER], { cwd, env, stdio: ['pipe', 'pipe', 'inherit'] });
   const replies = new Map();
   let buf = '';
@@ -325,7 +350,7 @@ test('MCP server: initialize, list tools, call tools', async () => {
     { jsonrpc: '2.0', method: 'notifications/initialized' },
     { jsonrpc: '2.0', id: 2, method: 'tools/list' },
     { jsonrpc: '2.0', id: 3, method: 'tools/call', params: { name: 'list_sessions', arguments: {} } },
-    { jsonrpc: '2.0', id: 4, method: 'tools/call', params: { name: 'read_session', arguments: { max_chars: 2000 } } },
+    { jsonrpc: '2.0', id: 4, method: 'tools/call', params: { name: 'read_session', arguments: { max_chars: 2000, detail: 'full' } } },
     { jsonrpc: '2.0', id: 5, method: 'tools/call', params: { name: 'export_session', arguments: { formats: ['html'], output_dir: path.join(out, 'mcp') } } },
     { jsonrpc: '2.0', id: 6, method: 'tools/call', params: { name: 'read_session', arguments: { session: 'nope-nope' } } },
   ];
