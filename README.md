@@ -78,7 +78,7 @@ Pick whichever fits. Each one needs [Node.js 18+](https://nodejs.org).
 | **Claude Code**: plugin, recommended | `/plugin marketplace add saieeshb/cc-exporter` then `/plugin install cc-exporter@cc-exporter` |
 | **macOS / Linux**: one line | `curl -fsSL https://raw.githubusercontent.com/saieeshb/cc-exporter/main/install.sh \| bash` |
 | **Windows**: PowerShell | `irm https://raw.githubusercontent.com/saieeshb/cc-exporter/main/install.ps1 \| iex` |
-| **Homebrew** | `brew install saieeshb/tap/cc-exporter` |
+| **Homebrew** | `brew tap saieeshb/tap && brew trust saieeshb/tap && brew install cc-exporter` |
 | **No install**: npx | `npx -y github:saieeshb/cc-exporter --help` |
 | **Claude desktop app**: chat | Download [`cc-exporter.mcpb`](https://github.com/saieeshb/cc-exporter/releases/latest/download/cc-exporter.mcpb) and open it |
 
@@ -119,7 +119,7 @@ Both installers read these environment variables:
 | `CC_EXPORTER_BIN` | `~/.local/bin` (macOS/Linux) | where the `cc-exporter` command goes |
 | `CC_EXPORTER_NO_PLUGIN` | unset | set to `1` to skip the Claude Code plugin |
 
-To uninstall, delete that folder and the `cc-exporter` command. For the plugin, run `/plugin uninstall cc-exporter@cc-exporter`.
+To uninstall, delete that folder and the `cc-exporter` command. For the plugin, run `/plugin uninstall cc-exporter@cc-exporter`. With Homebrew, run `brew uninstall cc-exporter`. Recent Homebrew versions ask you to `brew trust` a third-party tap once before installing from it.
 
 </details>
 

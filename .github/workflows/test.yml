@@ -68,3 +68,15 @@ jobs:
           & "$env:LOCALAPPDATA\cc-exporter\bin\cc-exporter.cmd" --version
       - name: npx from GitHub (this commit)
         run: npx -y "github:${{ github.repository }}#${{ github.sha }}" --version
+
+  homebrew:
+    needs: test
+    runs-on: macos-latest
+    steps:
+      - name: brew install from the tap (latest release)
+        run: |
+          brew tap saieeshb/tap
+          brew trust saieeshb/tap 2>/dev/null || true
+          brew install cc-exporter
+          cc-exporter --version
+          brew test cc-exporter
