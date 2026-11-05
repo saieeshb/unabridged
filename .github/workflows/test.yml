@@ -66,8 +66,8 @@ jobs:
         run: |
           ./install.ps1
           & "$env:LOCALAPPDATA\cc-exporter\bin\cc-exporter.cmd" --version
-      - name: npx from GitHub (this commit)
-        run: npx -y "github:${{ github.repository }}#${{ github.sha }}" --version
+      - name: npx from the GitHub tarball (this commit)
+        run: npx -y "https://github.com/${{ github.repository }}/archive/${{ github.sha }}.tar.gz" --version
 
   homebrew:
     needs: test

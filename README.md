@@ -79,7 +79,7 @@ Pick whichever fits. Each one needs [Node.js 18+](https://nodejs.org).
 | **macOS / Linux**: one line | `curl -fsSL https://raw.githubusercontent.com/saieeshb/cc-exporter/main/install.sh \| bash` |
 | **Windows**: PowerShell | `irm https://raw.githubusercontent.com/saieeshb/cc-exporter/main/install.ps1 \| iex` |
 | **Homebrew** | `brew tap saieeshb/tap && brew trust saieeshb/tap && brew install cc-exporter` |
-| **No install**: npx | `npx -y github:saieeshb/cc-exporter --help` |
+| **No install**: npx | `npx -y https://github.com/saieeshb/cc-exporter/archive/refs/tags/v0.1.0.tar.gz --help` |
 | **Claude desktop app**: chat | Download [`cc-exporter.mcpb`](https://github.com/saieeshb/cc-exporter/releases/latest/download/cc-exporter.mcpb) and open it |
 
 The curl and PowerShell installers add a `cc-exporter` command. If they find the `claude` command, they also install the Claude Code plugin.
@@ -197,8 +197,8 @@ Claude Code then requests thinking summaries, shows them in the conversation (an
 
 The connector has three tools: `list_sessions`, `read_session` (returns a transcript as Markdown, page by page, so Claude can summarize or search it) and `export_session`. The Claude Code plugin already includes it. For other clients:
 
-[![Add to Cursor](https://img.shields.io/badge/Cursor-Add_cc--exporter-000000?style=flat-square&logo=cursor&logoColor=white)](https://cursor.com/install-mcp?name=cc-exporter&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsImdpdGh1YjpzYWllZXNoYi9jYy1leHBvcnRlciN2MC4xLjAiLCJtY3AiXX0=)
-[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_cc--exporter-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=cc-exporter&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22github%3Asaieeshb/cc-exporter%23v0.1.0%22%2C%22mcp%22%5D%7D)
+[![Add to Cursor](https://img.shields.io/badge/Cursor-Add_cc--exporter-000000?style=flat-square&logo=cursor&logoColor=white)](https://cursor.com/install-mcp?name=cc-exporter&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsImh0dHBzOi8vZ2l0aHViLmNvbS9zYWllZXNoYi9jYy1leHBvcnRlci9hcmNoaXZlL3JlZnMvdGFncy92MC4xLjAudGFyLmd6IiwibWNwIl19)
+[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_cc--exporter-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=cc-exporter&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22https%3A//github.com/saieeshb/cc-exporter/archive/refs/tags/v0.1.0.tar.gz%22%2C%22mcp%22%5D%7D)
 
 <details>
 <summary><b>Claude Code (without the plugin)</b></summary>
@@ -206,7 +206,7 @@ The connector has three tools: `list_sessions`, `read_session` (returns a transc
 <br>
 
 ```bash
-claude mcp add cc-exporter -- npx -y github:saieeshb/cc-exporter#v0.1.0 mcp
+claude mcp add cc-exporter -- npx -y https://github.com/saieeshb/cc-exporter/archive/refs/tags/v0.1.0.tar.gz mcp
 ```
 
 If you installed with curl, PowerShell or Homebrew: `claude mcp add cc-exporter -- cc-exporter mcp`
@@ -227,7 +227,7 @@ Or add this to `claude_desktop_config.json` (Settings → Developer → Edit Con
   "mcpServers": {
     "cc-exporter": {
       "command": "npx",
-      "args": ["-y", "github:saieeshb/cc-exporter#v0.1.0", "mcp"]
+      "args": ["-y", "https://github.com/saieeshb/cc-exporter/archive/refs/tags/v0.1.0.tar.gz", "mcp"]
     }
   }
 }
@@ -240,7 +240,7 @@ Or add this to `claude_desktop_config.json` (Settings → Developer → Edit Con
 
 <br>
 
-It's a stdio server. Run `npx -y github:saieeshb/cc-exporter#v0.1.0 mcp`, or `cc-exporter mcp` once installed. The JSON block above works in most clients' `mcpServers` config.
+It's a stdio server. Run `npx -y https://github.com/saieeshb/cc-exporter/archive/refs/tags/v0.1.0.tar.gz mcp`, or `cc-exporter mcp` once installed. The JSON block above works in most clients' `mcpServers` config.
 
 </details>
 
