@@ -1,0 +1,4 @@
+# Keep LF line endings on every platform so scripts and tests behave the same on Windows.
+* text=auto eol=lf
+*.png binary
+*.mcpb binary

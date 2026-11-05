@@ -1,0 +1,62 @@
+{
+  "manifest_version": "0.2",
+  "name": "cc-exporter",
+  "display_name": "Claude Code Chat Exporter",
+  "version": "0.1.0",
+  "description": "List, read and export your local Claude Code sessions in full detail (Markdown, HTML, JSON).",
+  "long_description": "Reads the Claude Code transcripts stored on this computer (~/.claude/projects) and exports any session with every prompt, reply, thinking block, tool call with its input and output, file diff, subagent transcript, injected context and token usage. Exports are a self-contained searchable HTML page, Markdown with images saved beside it, and structured JSON. Optional redaction masks keys, tokens, passwords, emails and your home path. Nothing leaves your computer.",
+  "author": {
+    "name": "Saieesh Bairam",
+    "url": "https://github.com/saieeshb"
+  },
+  "license": "MIT",
+  "keywords": [
+    "claude code",
+    "export",
+    "transcript",
+    "chat history",
+    "markdown",
+    "html"
+  ],
+  "server": {
+    "type": "node",
+    "entry_point": "mcp/server.mjs",
+    "mcp_config": {
+      "command": "node",
+      "args": [
+        "${__dirname}/mcp/server.mjs"
+      ],
+      "env": {}
+    }
+  },
+  "tools": [
+    {
+      "name": "list_sessions",
+      "description": "List Claude Code sessions on this computer, newest first."
+    },
+    {
+      "name": "read_session",
+      "description": "Return a session transcript as Markdown, paged, for reading or summarizing."
+    },
+    {
+      "name": "export_session",
+      "description": "Write a session to HTML, Markdown and/or JSON files in full detail."
+    }
+  ],
+  "compatibility": {
+    "platforms": [
+      "darwin",
+      "linux",
+      "win32"
+    ],
+    "runtimes": {
+      "node": ">=18.0.0"
+    }
+  },
+  "homepage": "https://github.com/saieeshb/cc-exporter",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/saieeshb/cc-exporter.git"
+  },
+  "icon": "assets/icon.png"
+}

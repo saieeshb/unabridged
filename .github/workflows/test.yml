@@ -1,0 +1,70 @@
+name: test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: [18, 22]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Unit and end-to-end tests
+        run: node --test test/
+      - name: CLI entry point
+        run: |
+          node bin/cc-exporter.mjs --version
+          node bin/cc-exporter.mjs --help
+      - name: Build the desktop extension
+        run: node scripts/build-mcpb.mjs
+
+  installers:
+    needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: install.sh (this commit)
+        if: runner.os != 'Windows'
+        env:
+          CC_EXPORTER_REF: ${{ github.sha }}
+          CC_EXPORTER_NO_PLUGIN: '1'
+        run: |
+          bash install.sh
+          "$HOME/.local/bin/cc-exporter" --version
+          "$HOME/.local/bin/cc-exporter" --list --all
+      - name: install.ps1 in PowerShell 7 (this commit)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        env:
+          CC_EXPORTER_REF: ${{ github.sha }}
+          CC_EXPORTER_NO_PLUGIN: '1'
+        run: |
+          ./install.ps1
+          & "$env:LOCALAPPDATA\cc-exporter\bin\cc-exporter.cmd" --version
+          & "$env:LOCALAPPDATA\cc-exporter\bin\cc-exporter.cmd" --list --all
+      - name: install.ps1 in Windows PowerShell 5.1 (this commit)
+        if: runner.os == 'Windows'
+        shell: powershell
+        env:
+          CC_EXPORTER_REF: ${{ github.sha }}
+          CC_EXPORTER_NO_PLUGIN: '1'
+        run: |
+          ./install.ps1
+          & "$env:LOCALAPPDATA\cc-exporter\bin\cc-exporter.cmd" --version
+      - name: npx from GitHub (this commit)
+        run: npx -y "github:${{ github.repository }}#${{ github.sha }}" --version

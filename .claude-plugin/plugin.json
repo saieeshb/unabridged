@@ -1,0 +1,31 @@
+{
+  "name": "cc-exporter",
+  "version": "0.1.0",
+  "description": "Export Claude Code chats in full detail (prompts, replies, thinking, every tool call with its input and output, diffs, subagent transcripts, token usage) to Markdown, HTML or JSON. Adds /export-chat, a skill, and an MCP connector.",
+  "author": {
+    "name": "Saieesh Bairam",
+    "url": "https://github.com/saieeshb"
+  },
+  "homepage": "https://github.com/saieeshb/cc-exporter",
+  "repository": "https://github.com/saieeshb/cc-exporter",
+  "license": "MIT",
+  "keywords": [
+    "export",
+    "transcript",
+    "chat",
+    "history",
+    "archive",
+    "markdown",
+    "html",
+    "json",
+    "mcp"
+  ],
+  "mcpServers": {
+    "cc-exporter": {
+      "command": "node",
+      "args": [
+        "${CLAUDE_PLUGIN_ROOT}/mcp/server.mjs"
+      ]
+    }
+  }
+}

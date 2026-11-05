@@ -1,0 +1,36 @@
+name: Bug report
+description: Something exported wrong, crashed, or wouldn't install
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you ran, what you expected, and what you got instead.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Versions
+      description: cc-exporter (`cc-exporter --version`), Claude Code (`claude --version`), Node (`node -v`)
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Platform
+      options: [macOS, Linux, Windows, Other]
+    validations:
+      required: true
+  - type: dropdown
+    id: how
+    attributes:
+      label: How you ran it
+      options: [/export-chat slash command, Asked Claude in plain words, MCP connector, CLI, Installer script]
+  - type: textarea
+    id: snippet
+    attributes:
+      label: Transcript snippet (optional)
+      description: The JSONL lines that trigger it, with any real secrets or personal data removed.
+      render: json

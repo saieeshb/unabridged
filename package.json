@@ -1,0 +1,44 @@
+{
+  "name": "cc-exporter",
+  "version": "0.1.0",
+  "description": "Export Claude Code chats in full detail to Markdown, HTML or JSON: Claude Code plugin, CLI and MCP server.",
+  "type": "module",
+  "license": "MIT",
+  "private": true,
+  "bin": {
+    "cc-exporter": "bin/cc-exporter.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test test/",
+    "build:mcpb": "node scripts/build-mcpb.mjs",
+    "validate": "claude plugin validate ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/saieeshb/cc-exporter.git"
+  },
+  "files": [
+    "bin",
+    "lib",
+    "mcp",
+    "scripts",
+    "commands",
+    "skills",
+    ".claude-plugin",
+    "manifest.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "claude",
+    "claude-code",
+    "mcp",
+    "export",
+    "transcript",
+    "markdown",
+    "html"
+  ]
+}

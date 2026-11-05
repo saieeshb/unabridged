@@ -1,0 +1,15 @@
+{
+  "name": "cc-exporter",
+  "owner": {
+    "name": "Saieesh Bairam",
+    "url": "https://github.com/saieeshb"
+  },
+  "description": "cc-exporter: export Claude Code chats in full detail.",
+  "plugins": [
+    {
+      "name": "cc-exporter",
+      "source": "./",
+      "description": "Export Claude Code chats in full detail to Markdown, HTML or JSON: slash command, skill and MCP connector."
+    }
+  ]
+}
